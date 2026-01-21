@@ -13,6 +13,7 @@ class DatosPersonalesForm(forms.ModelForm):
     class Meta:
         model = DatosPersonales
         fields = [
+            'foto_perfil',
             'descripcionperfil', 'nombres', 'apellidos', 'nacionalidad',
             'lugarnacimiento', 'fechanacimiento', 'numerocedula', 'sexo',
             'estadocivil', 'licenciaconducir', 'telefonoconvencional',
@@ -71,7 +72,7 @@ class CursosRealizadosForm(forms.ModelForm):
 class ProductosAcademicosForm(forms.ModelForm):
     class Meta:
         model = ProductosAcademicos
-        fields = ['nombrerecurso', 'clasificador', 'descripcion', 'activarparaqueseveaenfront']
+        fields = ['nombrerecurso', 'clasificador', 'descripcion', 'archivo', 'link', 'activarparaqueseveaenfront']
         widgets = {
             'descripcion': forms.Textarea(attrs={'rows': 3}),
         }
@@ -79,7 +80,7 @@ class ProductosAcademicosForm(forms.ModelForm):
 class ProductosLaboralesForm(forms.ModelForm):
     class Meta:
         model = ProductosLaborales
-        fields = ['nombreproducto', 'fechaproducto', 'descripcion', 'activarparaqueseveaenfront']
+        fields = ['nombreproducto', 'fechaproducto', 'descripcion', 'archivo', 'link', 'activarparaqueseveaenfront']
         widgets = {
             'fechaproducto': forms.DateInput(attrs={'type': 'date'}),
             'descripcion': forms.Textarea(attrs={'rows': 3}),
@@ -88,7 +89,7 @@ class ProductosLaboralesForm(forms.ModelForm):
 class VentaGarageForm(forms.ModelForm):
     class Meta:
         model = VentaGarage
-        fields = ['nombreproducto', 'estadoproducto', 'descripcion', 'valordelbien', 'activarparaqueseveaenfront']
+        fields = ['nombreproducto', 'estadoproducto', 'descripcion', 'valordelbien', 'imagen', 'activarparaqueseveaenfront']
         widgets = {
             'descripcion': forms.Textarea(attrs={'rows': 3}),
         }

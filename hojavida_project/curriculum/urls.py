@@ -4,6 +4,7 @@ from . import views
 app_name = 'curriculum'
 
 urlpatterns = [
+    
     # Página principal
     path('', views.home, name='home'),
 
@@ -11,13 +12,8 @@ urlpatterns = [
     path('mi-hoja-vida/', views.mi_hoja_vida, name='mi_hoja_vida'),
     
     # Autenticación
-    path('signup/', views.signup, name='signup'),
     path('login/', views.user_login, name='login'),
     path('logout/', views.user_logout, name='logout'),
-    
-    # Perfiles públicos
-    path('perfiles/', views.lista_perfiles, name='lista_perfiles'),
-    path('perfil/<int:idperfil>/', views.detalle_perfil, name='detalle_perfil'),
     
     # Panel de gestión
     path('panel-gestion/', views.panel_gestion, name='panel_gestion'),

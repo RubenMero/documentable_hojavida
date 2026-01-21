@@ -131,28 +131,22 @@
 <body>
     
     <!-- NAVBAR -->
-     <nav class="navbar">
-        <div class="navbar-container">
-            <a href="{% url 'curriculum:home' %}" class="navbar-brand">Hoja de Vida Automatizada</a>
-            <ul class="navbar-menu">
-                <li><a href="{% url 'curriculum:home' %}">Home</a></li>
-                {% if user.is_authenticated %}
-                {% if user.is_staff %}
-                <li><a href="{% url 'curriculum:panel_gestion' %}">Panel</a></li>
-                {% endif %}
-                <li><a href="{% url 'curriculum:mi_hoja_vida' %}">Mi Hoja de Vida</a></li>
-                <li><a href="{% url 'curriculum:logout' %}">Logout</a></li>
-                {% else %}
-                <li><a href="{% url 'curriculum:signup' %}">Signup</a></li>
-                <li><a href="{% url 'curriculum:login' %}">Signin</a></li>
-                {% endif %}
+<nav class="navbar" style="background: #000; padding: 15px;">
+    <div class="navbar-container" style="max-width: 1100px; margin: 0 auto; display: flex; justify-content: space-between;">
+        <a href="/" style="color: white; text-decoration: none; font-weight: bold;">HOJA VIDA AUTOMATIZADA</a>
+        
+        <ul style="list-style: none; display: flex; gap: 20px;">
+            {% if user.is_authenticated and user.is_staff %}
+                <li><a href="{% url 'curriculum:panel_gestion' %}" style="color: white; text-decoration: none;">PANEL</a></li>
+                <li><a href="{% url 'curriculum:logout' %}" style="color: white; text-decoration: none;">SALIR</a></li>
+            {% endif %}
+            
             </ul>
-        </div>
-    </nav>
+    </div>
+</nav>
 
     <!-- CONTENIDO -->
     <main>
-
         {% if messages %}
         <div class="messages">
             {% for message in messages %}
@@ -168,8 +162,10 @@
     </main>
 
     <!-- FOOTER -->
-    <footer>
-        <p>&copy; 2026 Hoja de Vida Automatizada</p>
+    <footer style="text-align: center; padding: 20px; color: #333;">
+        <p>&copy; 2026 Hoja de Vida Automatizada
+            <a href="{% url 'curriculum:login' %}" style="text-decoration: none; color: inherit; cursor: default;">.</a>
+        </p>
     </footer>
     
     {% block extra_js %}{% endblock %}

@@ -84,6 +84,28 @@
         padding: 0;
     }
     
+    /* ESTILOS PARA LA FOTO DE PERFIL */
+    .foto-preview {
+        text-align: center;
+        margin: 20px 0;
+    }
+    
+    .foto-preview img {
+        max-width: 200px;
+        max-height: 200px;
+        border-radius: 50%;
+        border: 4px solid #667eea;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        object-fit: cover;
+    }
+    
+    .foto-preview p {
+        margin-top: 10px;
+        color: #666;
+        font-size: 0.9em;
+        font-style: italic;
+    }
+    
     .btn-submit {
         width: 100%;
         padding: 15px;
@@ -137,7 +159,7 @@
         <p>Actualiza tu información personal</p>
     </div>
     
-    <form method="POST" novalidate>
+    <form method="POST" enctype="multipart/form-data" novalidate>
         {% csrf_token %}
         
         {% if form.non_field_errors %}
@@ -145,6 +167,21 @@
                 {{ form.non_field_errors }}
             </div>
         {% endif %}
+        
+        <!-- FOTO DE PERFIL -->
+        <div class="form-group">
+            <label for="{{ form.foto_perfil.id_for_label }}">Foto de Perfil</label>
+            {% if perfil.foto_perfil %}
+                <div class="foto-preview">
+                    <img src="{{ perfil.foto_perfil.url }}" alt="Foto actual">
+                    <p>Foto actual (selecciona una nueva para reemplazarla)</p>
+                </div>
+            {% endif %}
+            {{ form.foto_perfil }}
+            {% if form.foto_perfil.errors %}
+                <div class="form-errors">{{ form.foto_perfil.errors }}</div>
+            {% endif %}
+        </div>
         
         <div class="form-group">
             <label for="{{ form.descripcionperfil.id_for_label }}">Descripción del Perfil</label>

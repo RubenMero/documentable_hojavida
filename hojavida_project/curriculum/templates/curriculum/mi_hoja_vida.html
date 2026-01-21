@@ -1,257 +1,230 @@
 {% extends 'curriculum/base.html' %}
 
-{% block title %}{% if perfil %}{{ perfil.nombres }} {{ perfil.apellidos }}{% else %}Hoja de Vida Automatizada{% endif %}{% endblock %}
-
 {% block extra_css %}
 <style>
-    .hero-simple {
-        text-align: center;
-        padding: 50px 20px;
+    :root {
+        --negro-fuerte: #000000;
+        --gris-profundo: #1a1a1a;
+        --gris-suave: #f1f5f9;
+        --detalle: #334155;
+    }
+    /* DISEÑO PROFESIONAL Y ALTO CONTRASTE */
+    .cv-container {
+        display: flex;
+        gap: 40px;
+        align-items: center;
+        padding-bottom: 30px;
         margin-bottom: 40px;
+        border-bottom: 1px solid #e2e8f0;
     }
     
-    .hero-simple h1 {
-        font-size: 3em;
-        color: #2c3e50;
-        margin-bottom: 15px;
-        font-weight: 300;
+    .cv-photo {
+        width: 160px;
+        height: 160px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 2px solid #000;
+        padding: 5px;
+        background: #fff;
     }
     
-    .hero-simple p {
-        font-size: 1.2em;
-        color: #7f8c8d;
-        font-weight: 300;
+    .hero-text h1 {
+        font-size: 3.2em;
+        color: var(--negro-fuerte);
+        margin: 0;
+        font-weight: 850;
+        letter-spacing: -1px;
+        line-height: 1.5;
     }
-    
+
+    .hero-text p {
+        margin-top: 10px; /* Espacio extra hacia arriba */
+        color: #444; 
+        font-size: 1.3em; 
+        font-weight: 500;
+        letter-spacing: 0.5px;
+    }
+
+    /* DATOS PERSONALES EN VERTICAL */
+    .info-grid {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        margin-top: 20px;
+    }
+
+    .info-item {
+        display: flex;
+        border-bottom: 1px solid #f0f0f0;
+        padding-bottom: 8px;
+    }
+
+    .info-item strong {
+        width: 220px; /* Alineación perfecta de etiquetas */
+        color: #000 !important;
+        font-weight: 700;
+        text-transform: uppercase;
+        font-size: 0.85em;
+    }
+
+    .info-item span, .info-item a {
+        color: #1a1a1a; /* Texto oscuro, no gris */
+        font-weight: 400;
+    }
+
+    /* SECCIONES */
     .seccion {
-        margin-bottom: 50px;
+        margin-bottom:60px;
     }
     
     .seccion-titulo {
-        font-size: 1.8em;
-        color: #2c3e50;
-        margin-bottom: 25px;
-        padding-bottom: 12px;
-        border-bottom: 2px solid #e9ecef;
-        font-weight: 400;
-    }
-    
-    .info-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-        gap: 25px;
+        font-size: 1.4em;
+        color: var(--negro-fuerte);
+        border-bottom: 2px solid #000;
+        display: inline-block; 
+        padding-bottom: 5px;
         margin-bottom: 30px;
-    }
-    
-    .info-item {
-        padding: 0;
-    }
-    
-    .info-item strong {
-        color: #888;
-        display: block;
-        margin-bottom: 8px;
-        font-size: 0.85em;
         text-transform: uppercase;
-        letter-spacing: 1px;
-        font-weight: 500;
+        letter-spacing: 2px;
+        font-weight: 800;
     }
-    
-    .info-item span {
-        color: #2c3e50;
-        font-size: 1.05em;
-        font-weight: 300;
-    }
-    
-    .info-item a {
-        color: #667eea;
-        text-decoration: none;
-    }
-    
-    .info-item a:hover {
-        text-decoration: underline;
-    }
-    
+
     .item-card {
-        background: #fafafa;
-        border: 1px solid #e8e8e8;
-        padding: 25px;
-        margin-bottom: 20px;
-        border-radius: 4px;
-        transition: all 0.2s;
+        border-left: 2px solid #5802ed;
+        padding-left: 20px;
+        margin-bottom: 25px;
     }
-    
-    .item-card:hover {
-        border-color: #d0d0d0;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-    }
-    
+
     .item-card h4 {
-        color: #2c3e50;
-        font-size: 1.3em;
-        margin-bottom: 10px;
-        font-weight: 400;
+        color: #000;
+        font-weight: 700;
+        margin-bottom: 5px;
     }
-    
-    .item-card .empresa {
-        color: #667eea;
-        font-weight: 500;
-        font-size: 1.1em;
-    }
-    
-    .item-card p {
-        color: #555;
-        margin: 10px 0;
-        line-height: 1.7;
-        font-weight: 300;
-    }
-    
-    .fecha {
-        background: #f0f0f0;
-        color: #555;
-        padding: 5px 12px;
-        border-radius: 3px;
-        font-size: 0.85em;
-        display: inline-block;
-        margin-right: 8px;
-        border: 1px solid #e0e0e0;
-    }
-    
+
     .badge {
-        background: #667eea;
-        color: white;
-        padding: 5px 12px;
-        border-radius: 3px;
-        font-size: 0.85em;
-        display: inline-block;
-        margin-right: 8px;
-    }
-    
-    .certificado-link {
-        color: #667eea;
-        text-decoration: none;
-        font-weight: 500;
-        padding: 8px 15px;
-        border: 1px solid #667eea;
+        background: #e9ecef;
+        color: #000;
+        padding: 2px 8px;
         border-radius: 4px;
+        font-size: 0.85em;
+        font-weight: 600;
+    }
+
+    .certificado-link {
+        color: #5802ed;
+        text-decoration: underline;
+        font-weight: 600;
         display: inline-block;
         margin-top: 10px;
-        transition: all 0.2s;
-    }
-    
-    .certificado-link:hover {
-        background: #667eea;
-        color: white;
-    }
-    
-    .sin-datos {
-        text-align: center;
-        padding: 40px;
-        color: #999;
-        font-style: italic;
-    }
-    
-    .no-perfil {
-        text-align: center;
-        padding: 80px 20px;
-    }
-    
-    .no-perfil h2 {
-        font-size: 2.5em;
-        color: #2c3e50;
-        margin-bottom: 15px;
-    }
-    
-    .precio {
-        font-size: 1.4em;
-        color: #27ae60;
-        font-weight: bold;
     }
 </style>
 {% endblock %}
 
 {% block content %}
 {% if perfil %}
-    <div class="hero-simple">
-        <h1>{{ perfil.nombres }} {{ perfil.apellidos }}</h1>
-        <p>{{ perfil.descripcionperfil|default:"Profesional" }}</p>
-    </div>
-    
-    <!-- DATOS PERSONALES -->
-    <div class="seccion">
-        <h2 class="seccion-titulo">Datos Personales</h2>
-        <div class="info-grid">
-            <div class="info-item">
-                <strong>Cedula</strong>
-                <span>{{ perfil.numerocedula }}</span>
+    <div class="cv-container">
+        {% if perfil.foto_perfil %}
+            <img src="{{ perfil.foto_perfil.url }}" alt="Foto" class="cv-photo">
+        {% else %}
+            <div class="cv-photo" style="background: #eee; display: flex; align-items: center; justify-content: center; color: #666;">
+                <span>Sin Foto</span>
             </div>
-            <div class="info-item">
-                <strong>Fecha de Nacimiento</strong>
-                <span>{{ perfil.fechanacimiento|date:"d/m/Y"|default:"No especificada" }}</span>
-            </div>
-            <div class="info-item">
-                <strong>Sexo</strong>
-                <span>{% if perfil.sexo == 'H' %}Hombre{% else %}Mujer{% endif %}</span>
-            </div>
-            <div class="info-item">
-                <strong>Nacionalidad</strong>
-                <span>{{ perfil.nacionalidad|default:"No especificada" }}</span>
-            </div>
-            {% if perfil.lugarnacimiento %}
-            <div class="info-item">
-                <strong>Lugar de Nacimiento</strong>
-                <span>{{ perfil.lugarnacimiento }}</span>
-            </div>
-            {% endif %}
-            {% if perfil.estadocivil %}
-            <div class="info-item">
-                <strong>Estado Civil</strong>
-                <span>{{ perfil.estadocivil }}</span>
-            </div>
-            {% endif %}
-            {% if perfil.telefonoconvencional %}
-            <div class="info-item">
-                <strong>Telefono</strong>
-                <span>{{ perfil.telefonoconvencional }}</span>
-            </div>
-            {% endif %}
-            {% if perfil.direcciondomiciliaria %}
-            <div class="info-item">
-                <strong>Direccion</strong>
-                <span>{{ perfil.direcciondomiciliaria }}</span>
-            </div>
-            {% endif %}
-            {% if perfil.sitioweb %}
-            <div class="info-item">
-                <strong>Sitio Web</strong>
-                <span><a href="{{ perfil.sitioweb }}" target="_blank">{{ perfil.sitioweb }}</a></span>
-            </div>
-            {% endif %}
+        {% endif %}
+
+        <div class="hero-text">
+            <h1>{{ perfil.nombres }} {{ perfil.apellidos }}</h1>
+            <p style="color: #000; font-size: 1.3em; font-weight: 500;">{{ perfil.descripcionperfil|default:"Profesional" }}</p>
         </div>
     </div>
     
-    <!-- EXPERIENCIA LABORAL -->
+    <div class="seccion">
+        <h2 class="seccion-titulo">Datos Personales</h2>
+        <div class="info-grid">
+            
+            {% if perfil.numerocedula %}
+            <div class="info-item">
+                <strong>Cédula:</strong>
+                <span>{{ perfil.numerocedula }}</span>
+            </div>
+            {% endif %}
+
+            {% if perfil.nacionalidad %}
+            <div class="info-item">
+                <strong>Nacionalidad:</strong>
+                <span>{{ perfil.nacionalidad }}</span>
+            </div>
+            {% endif %}
+
+            {% if perfil.fechanacimiento %}
+            <div class="info-item">
+                <strong>Fecha de Nacimiento:</strong>
+                <span>{{ perfil.fechanacimiento|date:"d/m/Y" }}</span>
+            </div>
+            {% endif %}
+
+            {% if perfil.lugarnacimiento %}
+            <div class="info-item">
+                <strong>Lugar de Nacimiento:</strong>
+                <span>{{ perfil.lugarnacimiento }}</span>
+            </div>
+            {% endif %}
+
+            {% if perfil.estadocivil %}
+            <div class="info-item">
+                <strong>Estado Civil:</strong>
+                <span>{{ perfil.estadocivil }}</span>
+            </div>
+            {% endif %}
+
+            {% if perfil.sexo %}
+            <div class="info-item">
+                <strong>Sexo:</strong>
+                <span>{% if perfil.sexo == 'H' %}Hombre{% else %}Mujer{% endif %}</span>
+            </div>
+            {% endif %}
+
+            {% if perfil.telefonoconvencional %}
+            <div class="info-item">
+                <strong>Teléfono Fijo:</strong>
+                <span>{{ perfil.telefonoconvencional }}</span>
+            </div>
+            {% endif %}
+
+            {% if perfil.telefonofijo %}
+            <div class="info-item">
+                <strong>Teléfono Celular:</strong>
+                <span>{{ perfil.telefonofijo }}</span>
+            </div>
+            {% endif %}
+
+            {% if perfil.direcciondomiciliaria %}
+            <div class="info-item">
+                <strong>Dirección:</strong>
+                <span>{{ perfil.direcciondomiciliaria }}</span>
+            </div>
+            {% endif %}
+
+            {% if perfil.sitioweb %}
+            <div class="info-item">
+                <strong>Sitio Web:</strong>
+                <span><a href="{{ perfil.sitioweb }}" target="_blank" style="color: #000; text-decoration: none; border-bottom: 1px solid #5802ed;">{{ perfil.sitioweb }}</a></span>
+            </div>
+            {% endif %}
+
+        </div>
+    </div>
+    
     {% if experiencias %}
     <div class="seccion">
         <h2 class="seccion-titulo">Experiencia Laboral</h2>
         {% for exp in experiencias %}
         <div class="item-card">
             <h4>{{ exp.cargodesempenado }}</h4>
-            <p class="empresa">{{ exp.nombrempresa }}</p>
-            {% if exp.lugarempresa %}
-            <p>ðŸ“ {{ exp.lugarempresa }}</p>
-            {% endif %}
+            <p><strong>{{ exp.nombrempresa }}</strong> | {{ exp.lugarempresa }}</p>
             <p>
-                <span class="fecha">{{ exp.fechainiciogestion|date:"m/Y" }}</span>
-                {% if exp.fechafingestion %}
-                    <span class="fecha">{{ exp.fechafingestion|date:"m/Y" }}</span>
-                {% else %}
-                    <span class="badge">Actualidad</span>
-                {% endif %}
+                <span class="badge">{{ exp.fechainiciogestion|date:"m/Y" }} - {% if exp.fechafingestion %}{{ exp.fechafingestion|date:"m/Y" }}{% else %}Actualidad{% endif %}</span>
             </p>
-            {% if exp.descripcionfunciones %}
             <p>{{ exp.descripcionfunciones }}</p>
-            {% endif %}
             {% if exp.rutacertificado %}
             <a href="{{ exp.rutacertificado.url }}" target="_blank" class="certificado-link">Ver Certificado</a>
             {% endif %}
@@ -260,20 +233,14 @@
     </div>
     {% endif %}
     
-    <!-- RECONOCIMIENTOS -->
     {% if reconocimientos %}
     <div class="seccion">
         <h2 class="seccion-titulo">Reconocimientos</h2>
         {% for rec in reconocimientos %}
         <div class="item-card">
             <h4>{{ rec.descripcionreconocimiento }}</h4>
-            <p>
-                <span class="badge">{{ rec.tiporeconocimiento }}</span>
-                <span class="fecha">{{ rec.fechareconocimiento|date:"d/m/Y" }}</span>
-            </p>
-            {% if rec.entidadpatrocinadora %}
+            <p><span class="badge">{{ rec.tiporeconocimiento }}</span> | {{ rec.fechareconocimiento|date:"d/m/Y" }}</p>
             <p><strong>Otorgado por:</strong> {{ rec.entidadpatrocinadora }}</p>
-            {% endif %}
             {% if rec.rutacertificado %}
             <a href="{{ rec.rutacertificado.url }}" target="_blank" class="certificado-link">Ver Certificado</a>
             {% endif %}
@@ -282,7 +249,6 @@
     </div>
     {% endif %}
     
-    <!-- CURSOS REALIZADOS -->
     {% if cursos %}
     <div class="seccion">
         <h2 class="seccion-titulo">Cursos Realizados</h2>
@@ -290,20 +256,10 @@
         <div class="item-card">
             <h4>{{ curso.nombrecurso }}</h4>
             <p>
-                <span class="fecha">{{ curso.fechainicio|date:"m/Y" }}</span>
-                {% if curso.fechafin %}
-                    <span class="fecha">{{ curso.fechafin|date:"m/Y" }}</span>
-                {% endif %}
-                {% if curso.totalhoras %}
-                    <span class="badge">{{ curso.totalhoras }} horas</span>
-                {% endif %}
+                <span class="badge">{{ curso.totalhoras }} horas</span> | 
+                {{ curso.fechainicio|date:"m/Y" }} - {{ curso.fechafin|date:"m/Y" }}
             </p>
-            {% if curso.descripcioncurso %}
-            <p>{{ curso.descripcioncurso }}</p>
-            {% endif %}
-            {% if curso.entidadpatrocinadora %}
             <p><strong>Impartido por:</strong> {{ curso.entidadpatrocinadora }}</p>
-            {% endif %}
             {% if curso.rutacertificado %}
             <a href="{{ curso.rutacertificado.url }}" target="_blank" class="certificado-link">Ver Certificado</a>
             {% endif %}
@@ -311,98 +267,47 @@
         {% endfor %}
     </div>
     {% endif %}
-    
-<!-- PRODUCTOS ACADEMICOS -->
-{% if productos_academicos %}
-<div class="seccion">
-    <h2 class="seccion-titulo">Productos Académicos</h2>
 
-    {% for prod in productos_academicos %}
-    <div class="item-card">
-        <h4>{{ prod.nombrerecurso }}</h4>
-
-        {% if prod.clasificador %}
-        <p><span class="badge">{{ prod.clasificador }}</span></p>
-        {% endif %}
-
-        {% if prod.descripcion %}
-        <p>{{ prod.descripcion }}</p>
-        {% endif %}
-
-        {% if prod.archivo %}
-        <a href="{{ prod.archivo.url }}" target="_blank" class="certificado-link">
-            Ver Archivo
-        </a>
-        {% endif %}
-
-        {% if prod.link %}
-        <a href="{{ prod.link }}" target="_blank" class="certificado-link">
-            Ver Enlace
-        </a>
-        {% endif %}
-    </div>
-    {% endfor %}
-</div>
-{% endif %}
-    
-    <!-- PRODUCTOS LABORALES -->
-    {% if productos_laborales %}
+    {% if productos_academicos %}
     <div class="seccion">
-        <h2 class="seccion-titulo">Productos Laborales</h2>
-        {% for prod in productos_laborales %}
+        <h2 class="seccion-titulo">Productos Académicos</h2>
+        {% for prod in productos_academicos %}
         <div class="item-card">
-            <h4>{{ prod.nombreproducto }}</h4>
-            <p><span class="fecha">{{ prod.fechaproducto|date:"m/Y" }}</span></p>
-            {% if prod.descripcion %}
+            <h4>{{ prod.nombrerecurso }}</h4>
+            <p><span class="badge">{{ prod.clasificador }}</span></p>
             <p>{{ prod.descripcion }}</p>
+            {% if prod.archivo %}
+            <a href="{{ prod.archivo.url }}" target="_blank" class="certificado-link">Ver Archivo</a>
             {% endif %}
         </div>
         {% endfor %}
     </div>
     {% endif %}
     
-    <!-- VENTA GARAGE -->
     {% if ventas %}
     <div class="seccion">
         <h2 class="seccion-titulo">Venta Garage</h2>
         {% for venta in ventas %}
         <div class="item-card">
             <h4>{{ venta.nombreproducto }}</h4>
-            <p>
-                <span class="badge">Estado: {{ venta.estadoproducto }}</span>
-                <span class="precio">${{ venta.valordelbien }}</span>
-            </p>
-            {% if venta.descripcion %}
+            <p><span class="badge">Estado: {{ venta.estadoproducto }}</span> | <strong>${{ venta.valordelbien }}</strong></p>
             <p>{{ venta.descripcion }}</p>
-            {% endif %}
         </div>
         {% endfor %}
     </div>
     {% endif %}
 
-            <!-- BOTÓN DESCARGAR PDF -->
-    <div style="text-align: center; margin-bottom: 40px;">
+    <div style="text-align: center; margin: 50px 0;">
         <a href="{% url 'curriculum:descargar_pdf' %}" 
-           style="
-               padding: 15px 40px;
-               background: #5802ed;
-               color: white;
-               text-decoration: none;
-               border-radius: 6px;
-               font-weight: 600;
-               display: inline-block;
-               transition: all 0.3s;
-           "
-           onmouseover="this.style.background='#218838'"
-           onmouseout="this.style.background='#28a745'">
+           style="padding: 15px 40px; background: #5802ed; color: white; text-decoration: none; border-radius: 6px; font-weight: 600; display: inline-block;">
             Descargar Hoja de vida en PDF
         </a>
     </div>
-{% else %}
-    <div class="no-perfil">
-        <h2>No hay hoja de vida disponible</h2>
-        <p>Aun no se ha creado ningun perfil. <a href="/panel-control/" style="color: #667eea;">Ir al Panel de Control</a></p>
-    </div>
 
+{% else %}
+    <div style="text-align: center; padding: 100px 20px;">
+        <h2>No hay hoja de vida disponible</h2>
+        <p>Aún no se ha creado ningún perfil activo.</p>
+    </div>
 {% endif %}
 {% endblock %}

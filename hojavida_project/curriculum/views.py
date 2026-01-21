@@ -7,7 +7,6 @@ from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from reportlab.lib.enums import TA_CENTER
 from io import BytesIO
 
-
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.decorators import login_required
@@ -34,79 +33,9 @@ from .forms import (
 
 # Vista de inicio/home - Pagina de bienvenida para TODOS
 def home(request):
-    """Página de bienvenida publica"""
-    return render(request,'curriculum/home.html')
-
-# Vista principal: Lista de perfiles
-def lista_perfiles(request):
-    perfiles = DatosPersonales.objects.filter(perfilactivo=1)
-    context = {
-        'perfiles': perfiles
-    }
-    return render(request, 'curriculum/lista_perfiles.html', context)
-
-
-# Vista de detalle: Hoja de vida completa de una persona
-def detalle_perfil(request, idperfil):
-    perfil = get_object_or_404(DatosPersonales, idperfil=idperfil)
-    
-    experiencias = ExperienciaLaboral.objects.filter(
-        idperfilconqueestaactivo=perfil,
-        activarparaqueseveaenfront=True
-    )
-    
-    reconocimientos = Reconocimientos.objects.filter(
-        idperfilconqueestaactivo=perfil,
-        activarparaqueseveaenfront=True
-    )
-    
-    cursos = CursosRealizados.objects.filter(
-        idperfilconqueestaactivo=perfil,
-        activarparaqueseveaenfront=True
-    )
-    
-    productos_academicos = ProductosAcademicos.objects.filter(
-        idperfilconqueestaactivo=perfil,
-        activarparaqueseveaenfront=True
-    )
-    
-    productos_laborales = ProductosLaborales.objects.filter(
-        idperfilconqueestaactivo=perfil,
-        activarparaqueseveaenfront=True
-    )
-    
-    ventas = VentaGarage.objects.filter(
-        idperfilconqueestaactivo=perfil,
-        activarparaqueseveaenfront=True
-    )
-    
-    context = {
-        'perfil': perfil,
-        'experiencias': experiencias,
-        'reconocimientos': reconocimientos,
-        'cursos': cursos,
-        'productos_academicos': productos_academicos,
-        'productos_laborales': productos_laborales,
-        'ventas': ventas,
-    }
-    
-    return render(request, 'curriculum/detalle_perfil.html', context)
-
-
-# Vista de registro (signup)
-def signup(request):
-    if request.method == 'POST':
-        form = UserCreationForm(request.POST)
-        if form.is_valid():
-            user = form.save()
-            login(request, user)
-            messages.success(request, '¡Cuenta creada exitosamente! Completa tu perfil.')
-            return redirect('curriculum:home')  
-    else:
-        form = UserCreationForm()
-    return render(request, 'curriculum/signup.html', {'form': form})
-
-
+    """Página de bienvenida que muestra directamente la hoja de vida"""
+    return mi_hoja_vida(request)
+        
 
 # Vista de login
 def user_login(request):
@@ -119,7 +48,7 @@ def user_login(request):
             if user is not None:
                 login(request, user)
                 messages.success(request, f'Bienvenido {username}!')
-                return redirect('curriculum:panel_gestion')
+                return redirect('curriculum:mi_hoja_vida')
             else:
                 messages.error(request, 'Usuario o contraseña incorrectos.')
         else:
@@ -128,13 +57,11 @@ def user_login(request):
         form = AuthenticationForm()
     return render(request, 'curriculum/login.html', {'form': form})
 
-
 # Vista de logout
 def user_logout(request):
     logout(request)
     messages.success(request, 'Sesion cerrada exitosamente!')
     return redirect('curriculum:home')
-
 
 # Vista de perfil personal
 @login_required
@@ -169,7 +96,9 @@ def mi_perfil(request):
     return render(request, 'curriculum/mi_perfil.html', context)
 
 
-# PANEL DE GESTIÃ“N (como el admin de Django)
+
+
+# PANEL DE GESTION (como el admin de Django)
 @login_required
 def panel_gestion(request):
     perfil = DatosPersonales.objects.filter(perfilactivo=1).first()
@@ -197,14 +126,13 @@ def panel_gestion(request):
     
     return render(request, 'curriculum/panel_gestion.html', context)
 
-
 # EDITAR DATOS PERSONALES
 @login_required
 def editar_datos_personales(request):
     perfil = DatosPersonales.objects.filter(perfilactivo=1).first()
     
     if request.method == 'POST':
-        form = DatosPersonalesForm(request.POST, instance=perfil)
+        form = DatosPersonalesForm(request.POST, request.FILES, instance=perfil)
         if form.is_valid():
             form.save()
             messages.success(request, 'Datos personales actualizados.')
@@ -213,7 +141,6 @@ def editar_datos_personales(request):
         form = DatosPersonalesForm(instance=perfil)
     
     return render(request, 'curriculum/editar_datos_personales.html', {'form': form, 'perfil': perfil})
-
 
 # AGREGAR EXPERIENCIA
 @login_required
@@ -233,7 +160,6 @@ def agregar_experiencia(request):
     
     return render(request, 'curriculum/agregar_experiencia.html', {'form': form})
 
-
 # EDITAR EXPERIENCIA
 @login_required
 def editar_experiencia(request, pk):
@@ -250,7 +176,6 @@ def editar_experiencia(request, pk):
     
     return render(request, 'curriculum/editar_experiencia.html', {'form': form, 'experiencia': experiencia})
 
-
 # ELIMINAR EXPERIENCIA
 @login_required
 def eliminar_experiencia(request, pk):
@@ -258,7 +183,6 @@ def eliminar_experiencia(request, pk):
     experiencia.delete()
     messages.success(request, 'Experiencia eliminada.')
     return redirect('curriculum:panel_gestion')
-
 
 # AGREGAR CURSO
 @login_required
@@ -278,7 +202,6 @@ def agregar_curso(request):
     
     return render(request, 'curriculum/agregar_curso.html', {'form': form})
 
-
 # EDITAR CURSO
 @login_required
 def editar_curso(request, pk):
@@ -294,7 +217,6 @@ def editar_curso(request, pk):
         form = CursosRealizadosForm(instance=curso)
     
     return render(request, 'curriculum/editar_curso.html', {'form': form, 'curso': curso})
-
 
 # ELIMINAR CURSO
 @login_required
@@ -322,7 +244,6 @@ def agregar_reconocimiento(request):
     
     return render(request, 'curriculum/agregar_reconocimiento.html', {'form': form})
 
-
 # EDITAR RECONOCIMIENTO
 @login_required
 def editar_reconocimiento(request, pk):
@@ -339,7 +260,6 @@ def editar_reconocimiento(request, pk):
     
     return render(request, 'curriculum/editar_reconocimiento.html', {'form': form, 'reconocimiento': reconocimiento})
 
-
 # ELIMINAR RECONOCIMIENTO
 @login_required
 def eliminar_reconocimiento(request, pk):
@@ -347,7 +267,6 @@ def eliminar_reconocimiento(request, pk):
     reconocimiento.delete()
     messages.success(request, 'Reconocimiento eliminado.')
     return redirect('curriculum:panel_gestion')
-
 
 # AGREGAR PRODUCTO ACADÉMICO
 @login_required
@@ -367,7 +286,6 @@ def agregar_producto_academico(request):
     
     return render(request, 'curriculum/agregar_producto_academico.html', {'form': form})
 
-
 # EDITAR PRODUCTO ACADÉMICO
 @login_required
 def editar_producto_academico(request, pk):
@@ -384,7 +302,6 @@ def editar_producto_academico(request, pk):
     
     return render(request, 'curriculum/editar_producto_academico.html', {'form': form, 'producto': producto})
 
-
 # ELIMINAR PRODUCTO ACADÉMICO
 @login_required
 def eliminar_producto_academico(request, pk):
@@ -392,7 +309,6 @@ def eliminar_producto_academico(request, pk):
     producto.delete()
     messages.success(request, 'Producto académico eliminado.')
     return redirect('curriculum:panel_gestion')
-
 
 # AGREGAR PRODUCTO LABORAL
 @login_required
@@ -412,7 +328,6 @@ def agregar_producto_laboral(request):
     
     return render(request, 'curriculum/agregar_producto_laboral.html', {'form': form})
 
-
 # EDITAR PRODUCTO LABORAL
 @login_required
 def editar_producto_laboral(request, pk):
@@ -429,7 +344,6 @@ def editar_producto_laboral(request, pk):
     
     return render(request, 'curriculum/editar_producto_laboral.html', {'form': form, 'producto': producto})
 
-
 # ELIMINAR PRODUCTO LABORAL
 @login_required
 def eliminar_producto_laboral(request, pk):
@@ -437,7 +351,6 @@ def eliminar_producto_laboral(request, pk):
     producto.delete()
     messages.success(request, 'Producto laboral eliminado.')
     return redirect('curriculum:panel_gestion')
-
 
 # AGREGAR VENTA GARAGE
 @login_required
@@ -457,7 +370,6 @@ def agregar_venta(request):
     
     return render(request, 'curriculum/agregar_venta.html', {'form': form})
 
-
 # EDITAR VENTA GARAGE
 @login_required
 def editar_venta(request, pk):
@@ -474,7 +386,6 @@ def editar_venta(request, pk):
     
     return render(request, 'curriculum/editar_venta.html', {'form': form, 'venta': venta})
 
-
 # ELIMINAR VENTA GARAGE
 @login_required
 def eliminar_venta(request, pk):
@@ -483,10 +394,8 @@ def eliminar_venta(request, pk):
     messages.success(request, 'Artículo eliminado.')
     return redirect('curriculum:panel_gestion')
 
-# Vista de Mi Hoja de Vida - SOLO para usuarios autenticados
-@login_required
+# Vista de Mi Hoja de Vida - TODOS
 def mi_hoja_vida(request):
-    """Muestra la hoja de vida del usuario autenticado"""
     try:
         perfil = DatosPersonales.objects.filter(perfilactivo=1).first()
         
@@ -530,32 +439,26 @@ def mi_hoja_vida(request):
                 'productos_laborales': productos_laborales,
                 'ventas': ventas,
             }
-            
+
             return render(request, 'curriculum/mi_hoja_vida.html', context)
         else:
-            messages.warning(request, 'Por favor completa tu perfil primero.')
-            return redirect('curriculum:editar_datos_personales')
+            # Si no hay perfil, mostramos la hoja vacía pero sin errores
+            return render(request, 'curriculum/mi_hoja_vida.html', {'perfil': None})
+            
     except Exception as e:
-        print(f"ERROR en mi_hoja_vida: {e}")
-        messages.error(request, 'Hubo un error al cargar tu hoja de vida.')
-        return redirect('curriculum:editar_datos_personales')
+        return HttpResponse(f"Error al cargar: {e}")
 
 
-
-
-@login_required
 def descargar_pdf(request):
     """Genera y descarga la hoja de vida en PDF"""
     perfil = DatosPersonales.objects.filter(perfilactivo=1).first()
     
     if not perfil:
         messages.error(request, 'No hay perfil disponible')
-        return redirect('curriculum:home')
-    
+        return redirect('curriculum:home')  
     # Crear el PDF en memoria
     buffer = BytesIO()
-    doc = SimpleDocTemplate(buffer, pagesize=letter, rightMargin=72, leftMargin=72, topMargin=72, bottomMargin=18)
-    
+    doc = SimpleDocTemplate(buffer, pagesize=letter, rightMargin=72, leftMargin=72, topMargin=72, bottomMargin=18)  
     # Estilos
     styles = getSampleStyleSheet()
     title_style = ParagraphStyle(

@@ -13,6 +13,9 @@ class DatosPersonales(models.Model):
     perfilactivo = models.IntegerField(default=1)
     apellidos = models.CharField(max_length=60)
     nombres = models.CharField(max_length=60)
+
+    foto_perfil = models.ImageField(upload_to='fotos_perfil/', blank=True, null=True)
+    
     nacionalidad = models.CharField(max_length=20, blank=True, null=True)
     lugarnacimiento = models.CharField(max_length=60, blank=True, null=True)
     fechanacimiento = models.DateField(blank=True, null=True)
@@ -179,6 +182,10 @@ class ProductosLaborales(models.Model):
     nombreproducto = models.CharField(max_length=100)
     fechaproducto = models.DateField()
     descripcion = models.TextField(blank=True, null=True)
+
+    archivo = models.FileField(upload_to='productos_laborales/', blank=True, null=True)
+    link = models.URLField(blank=True, null=True)
+
     activarparaqueseveaenfront = models.BooleanField(default=True)
     
     class Meta:
@@ -208,6 +215,9 @@ class VentaGarage(models.Model):
     estadoproducto = models.CharField(max_length=40, choices=ESTADO_CHOICES)
     descripcion = models.TextField(blank=True, null=True)
     valordelbien = models.DecimalField(max_digits=7, decimal_places=2)
+
+    imagen = models.ImageField(upload_to='ventas_garage/', blank=True, null=True)
+
     activarparaqueseveaenfront = models.BooleanField(default=True)
     
     class Meta:
