@@ -12,8 +12,6 @@ https://docs.djangoproject.com/en/6.0/ref/settings/
 
 import os 
 from pathlib import Path
-from decouple import config
-
 import dj_database_url
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -24,15 +22,17 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/6.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = config('SECRET_KEY', default='QYR6Mek5VPF3NtkNfPNaCVwSiiVOwATLtIg-aY8Qc_YbvMS4jIeacOKgsjAF6HDjIqs')
-
 # SECRET_KEY = 'django-insecure-gslf1*v0s1s%^*bry#fc6b-(a(ly@4&!56#6d82l&jg)q7m5s%'
 # SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-gslf1*v0s1s%^*bry#fc6b-(a(ly@4&!56#6d82l&jg)q7m5s%')
+SECRET_KEY = os.environ.get('SECRET_KEY', default='your secret key')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = config('DEBUG', default=False, cast=bool)
+DEBUG = 'RENDER' not in os.environ
 
-ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='localhost,127.0.0.1', cast=lambda v: [s.strip() for s in v.split(',')])
+ALLOWED_HOSTS = []
+RENDER_EXTERNAL_HOSTNAME = os.environ.get('RENDER_EXTERNAL_HOSTNAME')
+if RENDER_EXTERNAL_HOSTNAME:
+    ALLOWED_HOSTS.append(RENDER_EXTERNAL_HOSTNAME)
 
 
 
@@ -82,24 +82,13 @@ WSGI_APPLICATION = 'hojavida_project.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/6.0/ref/settings/#databases
 
-if DEBUG:
-    # Base de datos local para desarrollo
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.sqlite3',
-            'NAME': BASE_DIR / 'db.sqlite3',
-        }
-    }
-else:
-    # Base de datos PostgreSQL para producción (Render)
-    DATABASES = {
-        'default': dj_database_url.config(
-            default=config('postgresql://basededatos_bgk2_user:HX5ayvSdmnWrkWrUX7vDhI0dIFoSzgr8@dpg-d5o5o9ur433s73ft05c0-a/basededatos_bgk2'),
-            conn_max_age=600,
-            conn_health_checks=True,
-        )
-    }
-
+DATABASES = {
+    'default': dj_database_url.config(
+        # Replace this value with your local database's connection string.
+        default='postgresql://basededatos_bgk2_user:HX5ayvSdmnWrkWrUX7vDhI0dIFoSzgr8@dpg-d5o5o9ur433s73ft05c0-a/basededatos_bgk2',
+        conn_max_age=600
+    )
+}
 
 # Password validation
 # https://docs.djangoproject.com/en/6.0/ref/settings/#auth-password-validators
@@ -136,9 +125,17 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/6.0/howto/static-files/
 
 STATIC_URL = 'static/'
+
+if not Debug:
+
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
+
+LOGIN_URL = "/mi_hoja_vida"
+
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
