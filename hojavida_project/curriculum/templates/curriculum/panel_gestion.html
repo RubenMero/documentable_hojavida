@@ -213,13 +213,17 @@
     <div class="seccion-panel">
         <div class="seccion-titulo">
             <span>Datos Personales</span>
-            {% if user.is_superuser %}
+            <div style="display: flex; gap: 10px;">
+                 {% if user.is_superuser %}
             <a href="{% url 'curriculum:editar_datos_personales' %}" class="btn-agregar">
                 Editar Datos
             </a>
+            <a href="{% url 'curriculum:agregar_datos_personales' %}" class="btn-agregar" style="background: #28a745;">
+                Crear Nuevo Perfil
+            </a>
             {% endif %}
-
         </div>
+    </div>
         
         <div class="datos-personales-resumen">
             <h3>{{ perfil.nombres }} {{ perfil.apellidos }}</h3>

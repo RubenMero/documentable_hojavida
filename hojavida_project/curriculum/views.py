@@ -126,6 +126,22 @@ def panel_gestion(request):
     
     return render(request, 'curriculum/panel_gestion.html', context)
 
+# AGREGAR DATOS PERSONALES
+@login_required
+def agregar_datos_personales(request):
+    if request.method == 'POST':
+        form = DatosPersonalesForm(request.POST, request.FILES)
+        if form.is_valid():
+            nuevo_perfil = form.save(commit=False)
+            nuevo_perfil.perfilactivo = 1  # Activar el nuevo perfil
+            nuevo_perfil.save()
+            messages.success(request, 'Perfil creado exitosamente.')
+            return redirect('curriculum:panel_gestion')
+    else:
+        form = DatosPersonalesForm()
+    
+    return render(request, 'curriculum/agregar_datos_personales.html', {'form': form})
+
 # EDITAR DATOS PERSONALES
 @login_required
 def editar_datos_personales(request):

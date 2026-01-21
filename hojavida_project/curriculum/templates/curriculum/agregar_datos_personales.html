@@ -1,0 +1,293 @@
+{% extends 'curriculum/base.html' %}
+
+{% block title %}Agregar Datos Personales - Hoja de Vida{% endblock %}
+
+{% block extra_css %}
+<style>
+    .form-container {
+        max-width: 800px;
+        margin: 40px auto;
+        background: white;
+        border: 2px solid #e9ecef;
+        border-radius: 12px;
+        padding: 40px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    }
+    
+    .form-header {
+        text-align: center;
+        margin-bottom: 30px;
+        padding-bottom: 20px;
+        border-bottom: 3px solid #28a745;
+    }
+    
+    .form-header h2 {
+        color: #2c3e50;
+        font-size: 2em;
+        margin-bottom: 10px;
+    }
+    
+    .form-header p {
+        color: #6c757d;
+    }
+    
+    .form-group {
+        margin-bottom: 25px;
+    }
+    
+    .form-group label {
+        display: block;
+        color: #495057;
+        font-weight: 600;
+        margin-bottom: 8px;
+        font-size: 0.95em;
+    }
+    
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+        width: 100%;
+        padding: 12px 15px;
+        border: 2px solid #dee2e6;
+        border-radius: 6px;
+        font-size: 1em;
+        transition: all 0.2s;
+        font-family: inherit;
+    }
+    
+    .form-group input:focus,
+    .form-group select:focus,
+    .form-group textarea:focus {
+        outline: none;
+        border-color: #28a745;
+        box-shadow: 0 0 0 3px rgba(40, 167, 69, 0.1);
+    }
+    
+    .form-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+    }
+    
+    .form-errors {
+        background: #f8d7da;
+        border: 1px solid #f5c6cb;
+        color: #721c24;
+        padding: 12px;
+        border-radius: 6px;
+        margin-top: 8px;
+        font-size: 0.9em;
+    }
+    
+    .btn-submit {
+        width: 100%;
+        padding: 15px;
+        background: #28a745;
+        color: white;
+        border: none;
+        border-radius: 6px;
+        font-size: 1.1em;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s;
+        margin-top: 10px;
+    }
+    
+    .btn-submit:hover {
+        background: #218838;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(40, 167, 69, 0.4);
+    }
+    
+    .btn-cancelar {
+        display: block;
+        width: 100%;
+        padding: 12px;
+        background: #6c757d;
+        color: white;
+        text-align: center;
+        text-decoration: none;
+        border-radius: 6px;
+        font-size: 1em;
+        margin-top: 15px;
+        transition: all 0.2s;
+    }
+    
+    .btn-cancelar:hover {
+        background: #5a6268;
+    }
+    
+    @media (max-width: 768px) {
+        .form-row {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="form-container">
+    <div class="form-header">
+        <h2>➕ Crear Nuevo Perfil</h2>
+        <p>Completa la información para crear una nueva hoja de vida</p>
+    </div>
+    
+    <form method="POST" enctype="multipart/form-data" novalidate>
+        {% csrf_token %}
+        
+        {% if form.non_field_errors %}
+            <div class="form-errors">
+                {{ form.non_field_errors }}
+            </div>
+        {% endif %}
+
+        <div class="form-group">
+            <label for="{{ form.foto_perfil.id_for_label }}">Foto de Perfil</label>
+            {{ form.foto_perfil }}
+            {% if form.foto_perfil.errors %}
+                <div class="form-errors">{{ form.foto_perfil.errors }}</div>
+            {% endif %}
+        </div>
+        
+        <div class="form-group">
+            <label for="{{ form.descripcionperfil.id_for_label }}">Descripción del Perfil</label>
+            {{ form.descripcionperfil }}
+            {% if form.descripcionperfil.errors %}
+                <div class="form-errors">{{ form.descripcionperfil.errors }}</div>
+            {% endif %}
+        </div>
+        
+        <div class="form-row">
+            <div class="form-group">
+                <label for="{{ form.nombres.id_for_label }}">Nombres *</label>
+                {{ form.nombres }}
+                {% if form.nombres.errors %}
+                    <div class="form-errors">{{ form.nombres.errors }}</div>
+                {% endif %}
+            </div>
+            
+            <div class="form-group">
+                <label for="{{ form.apellidos.id_for_label }}">Apellidos *</label>
+                {{ form.apellidos }}
+                {% if form.apellidos.errors %}
+                    <div class="form-errors">{{ form.apellidos.errors }}</div>
+                {% endif %}
+            </div>
+        </div>
+        
+        <div class="form-row">
+            <div class="form-group">
+                <label for="{{ form.numerocedula.id_for_label }}">Número de Cédula *</label>
+                {{ form.numerocedula }}
+                {% if form.numerocedula.errors %}
+                    <div class="form-errors">{{ form.numerocedula.errors }}</div>
+                {% endif %}
+            </div>
+            
+            <div class="form-group">
+                <label for="{{ form.sexo.id_for_label }}">Sexo *</label>
+                {{ form.sexo }}
+                {% if form.sexo.errors %}
+                    <div class="form-errors">{{ form.sexo.errors }}</div>
+                {% endif %}
+            </div>
+        </div>
+        
+        <div class="form-row">
+            <div class="form-group">
+                <label for="{{ form.fechanacimiento.id_for_label }}">Fecha de Nacimiento</label>
+                {{ form.fechanacimiento }}
+                {% if form.fechanacimiento.errors %}
+                    <div class="form-errors">{{ form.fechanacimiento.errors }}</div>
+                {% endif %}
+            </div>
+            
+            <div class="form-group">
+                <label for="{{ form.nacionalidad.id_for_label }}">Nacionalidad</label>
+                {{ form.nacionalidad }}
+                {% if form.nacionalidad.errors %}
+                    <div class="form-errors">{{ form.nacionalidad.errors }}</div>
+                {% endif %}
+            </div>
+        </div>
+        
+        <div class="form-row">
+            <div class="form-group">
+                <label for="{{ form.lugarnacimiento.id_for_label }}">Lugar de Nacimiento</label>
+                {{ form.lugarnacimiento }}
+                {% if form.lugarnacimiento.errors %}
+                    <div class="form-errors">{{ form.lugarnacimiento.errors }}</div>
+                {% endif %}
+            </div>
+            
+            <div class="form-group">
+                <label for="{{ form.estadocivil.id_for_label }}">Estado Civil</label>
+                {{ form.estadocivil }}
+                {% if form.estadocivil.errors %}
+                    <div class="form-errors">{{ form.estadocivil.errors }}</div>
+                {% endif %}
+            </div>
+        </div>
+        
+        <div class="form-row">
+            <div class="form-group">
+                <label for="{{ form.telefonoconvencional.id_for_label }}">Teléfono Convencional</label>
+                {{ form.telefonoconvencional }}
+                {% if form.telefonoconvencional.errors %}
+                    <div class="form-errors">{{ form.telefonoconvencional.errors }}</div>
+                {% endif %}
+            </div>
+            
+            <div class="form-group">
+                <label for="{{ form.telefonofijo.id_for_label }}">Teléfono Fijo</label>
+                {{ form.telefonofijo }}
+                {% if form.telefonofijo.errors %}
+                    <div class="form-errors">{{ form.telefonofijo.errors }}</div>
+                {% endif %}
+            </div>
+        </div>
+        
+        <div class="form-group">
+            <label for="{{ form.direcciondomiciliaria.id_for_label }}">Dirección Domiciliaria</label>
+            {{ form.direcciondomiciliaria }}
+            {% if form.direcciondomiciliaria.errors %}
+                <div class="form-errors">{{ form.direcciondomiciliaria.errors }}</div>
+            {% endif %}
+        </div>
+        
+        <div class="form-group">
+            <label for="{{ form.direcciontrabajo.id_for_label }}">Dirección de Trabajo</label>
+            {{ form.direcciontrabajo }}
+            {% if form.direcciontrabajo.errors %}
+                <div class="form-errors">{{ form.direcciontrabajo.errors }}</div>
+            {% endif %}
+        </div>
+        
+        <div class="form-row">
+            <div class="form-group">
+                <label for="{{ form.licenciaconducir.id_for_label }}">Licencia de Conducir</label>
+                {{ form.licenciaconducir }}
+                {% if form.licenciaconducir.errors %}
+                    <div class="form-errors">{{ form.licenciaconducir.errors }}</div>
+                {% endif %}
+            </div>
+            
+            <div class="form-group">
+                <label for="{{ form.sitioweb.id_for_label }}">Sitio Web</label>
+                {{ form.sitioweb }}
+                {% if form.sitioweb.errors %}
+                    <div class="form-errors">{{ form.sitioweb.errors }}</div>
+                {% endif %}
+            </div>
+        </div>
+        
+        <button type="submit" class="btn-submit">
+            💾 Crear Perfil
+        </button>
+        
+        <a href="{% url 'curriculum:panel_gestion' %}" class="btn-cancelar">
+            ← Cancelar
+        </a>
+    </form>
+</div>
+{% endblock %}
