@@ -1,15 +1,26 @@
 #!/usr/bin/env bash
+# Salir si ocurre un error
 set -o errexit
 
+# 1. Instalar librerías
 pip install -r requirements.txt
+
+# 2. Archivos estáticos
 python manage.py collectstatic --no-input
+
+# 3. Crear las tablas en la base de datos de Render (Postgres)
 python manage.py migrate
 
-# ESTA LÍNEA CREA TU USUARIO SI NO EXISTE
+# 4. Crear tu usuario automáticamente si no existe
 python manage.py shell << END
 from django.contrib.auth import get_user_model
 User = get_user_model()
-if not User.objects.filter(username='jsrubenmerofranco').exists():
-    User.objects.create_superuser('jsrubenmerofranco', '', '12345678')
-    print('Superusuario creado exitosamente')
+username = 'jsrubenmerofranco'
+password = '12345678'
+
+if not User.objects.filter(username=username).exists():
+    User.objects.create_superuser(username=username, email='', password=password)
+    print(f'USUARIO {username} CREADO CON EXITO')
+else:
+    print(f'EL USUARIO {username} YA EXISTE EN POSTGRES')
 END

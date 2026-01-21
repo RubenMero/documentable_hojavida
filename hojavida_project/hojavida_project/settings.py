@@ -82,7 +82,7 @@ WSGI_APPLICATION = 'hojavida_project.wsgi.application'
 DATABASES = {
     'default': dj_database_url.config(
         # Replace this value with your local database's connection string.
-        default='postgresql://basededatos_bgk2_user:HX5ayvSdmnWrkWrUX7vDhI0dIFoSzgr8@dpg-d5o5o9ur433s73ft05c0-a/basededatos_bgk2',
+        default=os.environ.get('DATABASE_URL'),
         conn_max_age=600
     )
 }
