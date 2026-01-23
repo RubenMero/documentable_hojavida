@@ -118,5 +118,4 @@ class VentaGarageForm(forms.ModelForm):
             'estadoproducto': forms.Select(attrs={'class': 'form-control'}),
             'valordelbien': forms.NumberInput(attrs={'class': 'form-control'}),
             'nombreproducto': forms.TextInput(attrs={'class': 'form-control'}),
-            'imagen_producto': forms.ClearableFileInput(attrs={'class': 'form-control'}),
         }
