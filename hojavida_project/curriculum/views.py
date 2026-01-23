@@ -302,7 +302,7 @@ def agregar_producto_academico(request):
             messages.success(request, 'Producto académico agregado.')
             return redirect('curriculum:panel_gestion')
     else:
-        form = ProductosAcademicosForm()
+        form = ProductosAcademicosForm(request.POST, request.FILES)
     
     return render(request, 'curriculum/agregar_producto_academico.html', {'form': form})
 
@@ -344,7 +344,7 @@ def agregar_producto_laboral(request):
             messages.success(request, 'Producto laboral agregado.')
             return redirect('curriculum:panel_gestion')
     else:
-        form = ProductosLaboralesForm()
+        form = ProductosLaboralesForm(request.POST, request.FILES) 
     
     return render(request, 'curriculum/agregar_producto_laboral.html', {'form': form})
 
@@ -386,7 +386,7 @@ def agregar_venta(request):
             messages.success(request, 'Artículo agregado con imagen.')
             return redirect('curriculum:panel_gestion')
     else:
-        form = VentaGarageForm(equest.POST, request.FILES)
+        form = VentaGarageForm()
     
     return render(request, 'curriculum/agregar_venta.html', {'form': form})
 
