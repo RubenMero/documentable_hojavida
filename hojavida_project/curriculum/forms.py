@@ -9,6 +9,28 @@ from .models import (
     VentaGarage
 )
 
+from django import forms
+from .models import DatosPersonales
+
+class SeleccionSeccionesForm(forms.ModelForm):
+    class Meta:
+        model = DatosPersonales
+        fields = [
+            'imprimir_experiencia', 
+            'imprimir_reconocimientos', 
+            'imprimir_cursos', 
+            'imprimir_productos_academicos',
+            'imprimir_productos_laborales',
+            'imprimir_venta_garage', 
+        ]
+        widgets = {
+            'imprimir_experiencia': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
+            'imprimir_reconocimientos': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
+            'imprimir_cursos': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
+            'imprimir_productos_academicos': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
+            'imprimir_productos_laborales': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
+            'imprimir_venta_garage': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
+        }
 class DatosPersonalesForm(forms.ModelForm):
     class Meta:
         model = DatosPersonales
@@ -85,11 +107,16 @@ class ProductosLaboralesForm(forms.ModelForm):
             'fechaproducto': forms.DateInput(attrs={'type': 'date'}),
             'descripcion': forms.Textarea(attrs={'rows': 3}),
         }
-
+        
 class VentaGarageForm(forms.ModelForm):
     class Meta:
         model = VentaGarage
-        fields = ['nombreproducto', 'estadoproducto', 'descripcion', 'valordelbien', 'imagen', 'activarparaqueseveaenfront']
+        # Excluimos el perfil (se asigna automático) y la fecha (es auto_now_add)
+        exclude = ['idperfilconqueestaactivo', 'fecha_publicacion']
         widgets = {
-            'descripcion': forms.Textarea(attrs={'rows': 3}),
+            'descripcion': forms.Textarea(attrs={'rows': 3, 'class': 'form-control'}),
+            'estadoproducto': forms.Select(attrs={'class': 'form-control'}),
+            'valordelbien': forms.NumberInput(attrs={'class': 'form-control'}),
+            'nombreproducto': forms.TextInput(attrs={'class': 'form-control'}),
+            'imagen_producto': forms.ClearableFileInput(attrs={'class': 'form-control'}),
         }

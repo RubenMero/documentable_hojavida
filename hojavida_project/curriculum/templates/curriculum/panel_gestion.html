@@ -1,519 +1,120 @@
-{% extends "base.html" %} {% block content %}
-<div class="container">
-
-    {% if sin_perfil %}
-        <div class="alert alert-warning text-center" style="margin-top: 50px;">
-            <h2>No tienes un perfil creado aún.</h2>
-            <p>Para que el panel funcione, primero debes registrar tus datos básicos.</p>
-            <a href="/admin/curriculum/datospersonales/add/" class="btn btn-primary">
-                Haz clic aquí para crear tu perfil en el Admin
-            </a>
-        </div>
-    {% else %}
-        <h1>Panel de Gestión</h1>
-        <p>Bienvenido, {{ perfil.nombre }}</p>
-        
-        <div class="perfil-info">
-            {{ perfil.biografia }}
-        </div>
-        
-    {% endif %}
-
-</div>
-{% endblock %}
+{% extends "curriculum/base.html" %}
 
 {% block title %}Panel de Gestión - Hoja de Vida{% endblock %}
 
 {% block extra_css %}
 <style>
-    .panel-container {
-        max-width: 1200px;
-        margin: 0 auto;
-    }
-    
-    .panel-header {
-        background: linear-gradient(135deg, grey 0%, grey 100%);
-        color: white;
-        padding: 40px;
-        border-radius: 12px;
-        margin-bottom: 40px;
-        text-align: center;
-    }
-    
-    .panel-header h1 {
-        font-size: 2.5em;
-        margin-bottom: 10px;
-    }
-    
-    .panel-header p {
-        font-size: 1.2em;
-        opacity: 0.9;
-    }
-    
-    .seccion-panel {
-        background: white;
-        border: 2px solid #e9ecef;
-        border-radius: 12px;
-        padding: 30px;
-        margin-bottom: 30px;
-        box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-    }
-    
-    .seccion-titulo {
-        font-size: 1.8em;
-        color: #2c3e50;
-        margin-bottom: 20px;
-        padding-bottom: 15px;
-        border-bottom: 3px solid #667eea;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-    }
-    
-    .btn-agregar {
-        background: #667eea;
-        color: white;
-        padding: 10px 20px;
-        border-radius: 6px;
-        text-decoration: none;
-        font-size: 0.9em;
-        transition: all 0.3s;
-        display: inline-flex;
-        align-items: center;
-        gap: 8px;
-    }
-    
-    .btn-agregar:hover {
-        background: #5568d3;
-        transform: translateY(-2px);
-        box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
-    }
-    
-    .datos-personales-resumen {
-        background: #f8f9fa;
-        padding: 20px;
-        border-radius: 8px;
-        margin-bottom: 20px;
-    }
-    
-    .datos-personales-resumen h3 {
-        color: #2c3e50;
-        margin-bottom: 15px;
-    }
-    
-    .datos-personales-resumen p {
-        color: #495057;
-        margin: 8px 0;
-    }
-    
-    .lista-items {
-        list-style: none;
-        padding: 0;
-        margin: 0;
-    }
-    
-    .item-panel {
-        background: #f8f9fa;
-        border-left: 4px solid #667eea;
-        padding: 20px;
-        margin-bottom: 15px;
-        border-radius: 8px;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        transition: all 0.3s;
-    }
-    
-    .item-panel:hover {
-        background: #e9ecef;
-        transform: translateX(5px);
-    }
-    
-    .item-info h4 {
-        color: #2c3e50;
-        font-size: 1.2em;
-        margin-bottom: 8px;
-    }
-    
-    .item-info p {
-        color: #6c757d;
-        margin: 5px 0;
-        font-size: 0.95em;
-    }
-    
-    .item-acciones {
-        display: flex;
-        gap: 10px;
-    }
-    
-    .btn-editar, .btn-eliminar {
-        padding: 8px 16px;
-        border-radius: 6px;
-        text-decoration: none;
-        font-size: 0.9em;
-        transition: all 0.2s;
-        cursor: pointer;
-        border: none;
-    }
-    
-    .btn-editar {
-        background: #17a2b8;
-        color: white;
-    }
-    
-    .btn-editar:hover {
-        background: #138496;
-    }
-    
-    .btn-eliminar {
-        background: #dc3545;
-        color: white;
-    }
-    
-    .btn-eliminar:hover {
-        background: #c82333;
-    }
-    
-    .sin-datos {
-        text-align: center;
-        padding: 40px;
-        color: #6c757d;
-        font-style: italic;
-    }
-    
-    .badge-activo {
-        background: #28a745;
-        color: white;
-        padding: 4px 10px;
-        border-radius: 12px;
-        font-size: 0.8em;
-        margin-left: 10px;
-    }
-    
-    .badge-inactivo {
-        background: #6c757d;
-        color: white;
-        padding: 4px 10px;
-        border-radius: 12px;
-        font-size: 0.8em;
-        margin-left: 10px;
-    }
-    
-    .btn-ver-cv {
-        background: #28a745;
-        color: white;
-        padding: 12px 30px;
-        border-radius: 6px;
-        text-decoration: none;
-        font-size: 1.1em;
-        display: inline-block;
-        margin: 20px auto;
-        transition: all 0.3s;
-    }
-    
-    .btn-ver-cv:hover {
-        background: #218838;
-        transform: translateY(-2px);
-        box-shadow: 0 4px 12px rgba(40, 167, 69, 0.4);
-    }
-    
-    .acciones-rapidas {
-        text-align: center;
-        margin-top: 30px;
-    }
+    .panel-container { max-width: 1200px; margin: 0 auto; padding: 20px; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+    .panel-header { background: #2d3436; color: white; padding: 30px; border-radius: 10px; text-align: center; margin-bottom: 30px; }
+    .seccion-panel { background: #ffffff; border: 1px solid #dfe6e9; border-radius: 8px; padding: 20px; margin-bottom: 20px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+    .seccion-titulo { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #6c5ce7; padding-bottom: 10px; margin-bottom: 15px; font-size: 1.4em; font-weight: bold; }
+    .btn-agregar { background: #6c5ce7; color: white; padding: 8px 15px; border-radius: 5px; text-decoration: none; font-size: 0.9em; }
+    .item-panel { display: flex; justify-content: space-between; align-items: center; background: #f9f9f9; padding: 12px; margin-bottom: 8px; border-radius: 5px; border-left: 5px solid #6c5ce7; }
+    .btn-editar { color: #0984e3; text-decoration: none; margin-right: 10px; font-weight: bold; }
+    .btn-eliminar { color: #d63031; text-decoration: none; font-weight: bold; }
 </style>
 {% endblock %}
 
 {% block content %}
 <div class="panel-container">
     <div class="panel-header">
-        <h1>Panel de Gestión</h1>
-        <p>Administra tu hoja de vida profesional</p>
+        <h1>Centro de Control Profesional</h1>
+        <p>Usuario: {{ user.username }} | Perfil: {{ perfil.nombres }} {{ perfil.apellidos }}</p>
     </div>
-    
-    <!-- DATOS PERSONALES -->
+
     <div class="seccion-panel">
         <div class="seccion-titulo">
             <span>Datos Personales</span>
-            <div style="display: flex; gap: 10px;">
-                 {% if user.is_superuser %}
-            <a href="{% url 'curriculum:editar_datos_personales' %}" class="btn-agregar">
-                Editar Datos
-            </a>
-            <a href="{% url 'curriculum:agregar_datos_personales' %}" class="btn-agregar" style="background: #28a745;">
-                Crear Nuevo Perfil
-            </a>
-            {% endif %}
+            <a href="{% url 'curriculum:editar_datos_personales' %}" class="btn-agregar">Editar Perfil</a>
         </div>
+        <p><strong>Cédula:</strong> {{ perfil.numerocedula }} | <strong>Nacionalidad:</strong> {{ perfil.nacionalidad }}</p>
     </div>
-        
-        <div class="datos-personales-resumen">
-            <h3>{{ perfil.nombres }} {{ perfil.apellidos }}</h3>
-            <p><strong>Descripción:</strong> {{ perfil.descripcionperfil|default:"Sin descripción" }}</p>
-            <p><strong>Cédula:</strong> {{ perfil.numerocedula }}</p>
-            <p><strong>Fecha de Nacimiento:</strong> {{ perfil.fechanacimiento|date:"d/m/Y"|default:"No especificada" }}</p>
-            <p><strong>Nacionalidad:</strong> {{ perfil.nacionalidad|default:"No especificada" }}</p>
-        </div>
-    </div>
-    
-    <!-- EXPERIENCIA LABORAL -->
-    <div class="seccion-panel">
-        <div class="seccion-titulo">
-            <span>Experiencia Laboral ({{ experiencias.count }})</span>
-            {% if user.is_superuser %}
-<a href="{% url 'curriculum:agregar_experiencia' %}" class="btn-agregar">
-    Agregar Experiencia
-</a>
-{% endif %}
 
-        </div>
-        
-        {% if experiencias %}
-            <ul class="lista-items">
-                {% for exp in experiencias %}
-                <li class="item-panel">
-                    <div class="item-info">
-                        <h4>{{ exp.cargodesempenado }}
-                            {% if exp.activarparaqueseveaenfront %}
-                                <span class="badge-activo">Visible</span>
-                            {% else %}
-                                <span class="badge-inactivo">Oculto</span>
-                            {% endif %}
-                        </h4>
-                        <p>{{ exp.nombrempresa }}</p>
-                        <p>📅 {{ exp.fechainiciogestion|date:"m/Y" }} - 
-                            {% if exp.fechafingestion %}
-                                {{ exp.fechafingestion|date:"m/Y" }}
-                            {% else %}
-                                Actualidad
-                            {% endif %}
-                        </p>
-                    </div>
-                    <div class="item-acciones">
-                        <a href="{% url 'curriculum:editar_experiencia' exp.idexperiencialaboral %}" class="btn-editar">Editar</a>
-                        <a href="{% url 'curriculum:eliminar_experiencia' exp.idexperiencialaboral %}" class="btn-eliminar" onclick="return confirm('¿Estás seguro de eliminar esta experiencia?')">Eliminar</a>
-                    </div>
-                </li>
-                {% endfor %}
-            </ul>
-        {% else %}
-            <div class="sin-datos">No hay experiencia laboral registrada</div>
-        {% endif %}
-    </div>
-    
-    <!-- RECONOCIMIENTOS -->
     <div class="seccion-panel">
         <div class="seccion-titulo">
-            <span>Reconocimientos ({{ reconocimientos.count }})</span>
-            {% if user.is_superuser %}
-<a href="{% url 'curriculum:agregar_reconocimiento' %}" class="btn-agregar">
-    Agregar Reconocimiento
-</a>
-{% endif %}
+            <span>Experiencia Laboral</span>
+            <a href="{% url 'curriculum:agregar_experiencia' %}" class="btn-agregar">+ Agregar</a>
         </div>
-        
-        {% if reconocimientos %}
-            <ul class="lista-items">
-                {% for rec in reconocimientos %}
-                <li class="item-panel">
-                    <div class="item-info">
-                        <h4>{{ rec.descripcionreconocimiento }}
-                            {% if rec.activarparaqueseveaenfront %}
-                                <span class="badge-activo">Visible</span>
-                            {% else %}
-                                <span class="badge-inactivo">Oculto</span>
-                            {% endif %}
-                        </h4>
-                        <p>Tipo: {{ rec.tiporeconocimiento }}</p>
-                        <p>{{ rec.fechareconocimiento|date:"d/m/Y" }}</p>
-                        {% if rec.entidadpatrocinadora %}
-                        <p>{{ rec.entidadpatrocinadora }}</p>
-                        {% endif %}
-                    </div>
-                    <div class="item-acciones">
-                        <a href="{% url 'curriculum:editar_reconocimiento' rec.idreconocimiento %}" class="btn-editar">Editar</a>
-                        <a href="{% url 'curriculum:eliminar_reconocimiento' rec.idreconocimiento %}" class="btn-eliminar" onclick="return confirm('¿Estás seguro de eliminar este reconocimiento?')">Eliminar</a>
-                    </div>
-                </li>
-                {% endfor %}
-            </ul>
-        {% else %}
-            <div class="sin-datos">No hay reconocimientos registrados</div>
-        {% endif %}
+        {% for exp in experiencias %}
+        <div class="item-panel">
+            <div><strong>{{ exp.cargodesempenado }}</strong> - {{ exp.nombrempresa }}</div>
+            <div>
+                <a href="{% url 'curriculum:editar_experiencia' exp.idexperiencialaboral %}" class="btn-editar">Editar</a>
+                <a href="{% url 'curriculum:eliminar_experiencia' exp.idexperiencialaboral %}" class="btn-eliminar">Borrar</a>
+            </div>
+        </div>
+        {% endfor %}
     </div>
-    
-    <!-- CURSOS REALIZADOS -->
+
     <div class="seccion-panel">
         <div class="seccion-titulo">
-            <span>Cursos Realizados ({{ cursos.count }})</span>
-             {% if user.is_superuser %}
-        <a href="{% url 'curriculum:agregar_curso' %}" class="btn-agregar">
-            Agregar Curso
-        </a>
-        {% endif %}
+            <span>Reconocimientos</span>
+            <a href="{% url 'curriculum:agregar_reconocimiento' %}" class="btn-agregar">+ Agregar</a>
         </div>
-        
-        {% if cursos %}
-            <ul class="lista-items">
-                {% for curso in cursos %}
-                <li class="item-panel">
-                    <div class="item-info">
-                        <h4>{{ curso.nombrecurso }}
-                            {% if curso.activarparaqueseveaenfront %}
-                                <span class="badge-activo">Visible</span>
-                            {% else %}
-                                <span class="badge-inactivo">Oculto</span>
-                            {% endif %}
-                        </h4>
-                        <p>{{ curso.entidadpatrocinadora|default:"Sin entidad" }}</p>
-                        <p>📅 {{ curso.fechainicio|date:"m/Y" }} - 
-                            {% if curso.fechafin %}
-                                {{ curso.fechafin|date:"m/Y" }}
-                            {% else %}
-                                En curso
-                            {% endif %}
-                            {% if curso.totalhoras %}
-                                | ⏱️ {{ curso.totalhoras }} horas
-                            {% endif %}
-                        </p>
-                    </div>
-                    <div class="item-acciones">
-                        <a href="{% url 'curriculum:editar_curso' curso.idcursorealizado %}" class="btn-editar">Editar</a>
-                        <a href="{% url 'curriculum:eliminar_curso' curso.idcursorealizado %}" class="btn-eliminar" onclick="return confirm('¿Estás seguro de eliminar este curso?')">Eliminar</a>
-                    </div>
-                </li>
-                {% endfor %}
-            </ul>
-        {% else %}
-            <div class="sin-datos">No hay cursos registrados</div>
-        {% endif %}
+        {% for rec in reconocimientos %}
+        <div class="item-panel">
+            <div>{{ rec.descripcionreconocimiento }} ({{ rec.fechareconocimiento|date:"Y" }})</div>
+            <div>
+                <a href="{% url 'curriculum:editar_reconocimiento' rec.idreconocimiento %}" class="btn-editar">Editar</a>
+            </div>
+        </div>
+        {% endfor %}
     </div>
-    
-    <!-- PRODUCTOS ACADÉMICOS -->
+
     <div class="seccion-panel">
         <div class="seccion-titulo">
-            <span>Productos Académicos ({{ productos_academicos.count }})</span>
-            {% if user.is_superuser %}
-        <a href="{% url 'curriculum:agregar_producto_academico' %}" class="btn-agregar">
-            Agregar Producto
-        </a>
-        {% endif %}
+            <span>Cursos Realizados</span>
+            <a href="{% url 'curriculum:agregar_curso' %}" class="btn-agregar">+ Agregar</a>
         </div>
-        
-        {% if productos_academicos %}
-            <ul class="lista-items">
-                {% for prod in productos_academicos %}
-                <li class="item-panel">
-                    <div class="item-info">
-                        <h4>{{ prod.nombrerecurso }}
-                            {% if prod.activarparaqueseveaenfront %}
-                                <span class="badge-activo">Visible</span>
-                            {% else %}
-                                <span class="badge-inactivo">Oculto</span>
-                            {% endif %}
-                        </h4>
-                        {% if prod.clasificador %}
-                        <p>📂 {{ prod.clasificador }}</p>
-                        {% endif %}
-                        {% if prod.descripcion %}
-                        <p>{{ prod.descripcion|truncatewords:15 }}</p>
-                        {% endif %}
-                    </div>
-                    <div class="item-acciones">
-                        <a href="{% url 'curriculum:editar_producto_academico' prod.idproductoacademico %}" class="btn-editar">Editar</a>
-                        <a href="{% url 'curriculum:eliminar_producto_academico' prod.idproductoacademico %}" class="btn-eliminar" onclick="return confirm('¿Estás seguro de eliminar este producto académico?')">Eliminar</a>
-                    </div>
-                </li>
-                {% endfor %}
-            </ul>
-        {% else %}
-            <div class="sin-datos">No hay productos académicos registrados</div>
-        {% endif %}
+        {% for curso in cursos %}
+        <div class="item-panel">
+            <div>{{ curso.nombrecurso }}</div>
+            <a href="{% url 'curriculum:editar_curso' curso.idcursorealizado %}" class="btn-editar">Editar</a>
+        </div>
+        {% endfor %}
     </div>
-    
-    <!-- PRODUCTOS LABORALES -->
+
     <div class="seccion-panel">
         <div class="seccion-titulo">
-            <span>Productos Laborales ({{ productos_laborales.count }})</span>
-            {% if user.is_superuser %}
-        <a href="{% url 'curriculum:agregar_producto_laboral' %}" class="btn-agregar">
-            Agregar Producto
-        </a>
-        {% endif %}
+            <span>Productos Académicos</span>
+            <a href="{% url 'curriculum:agregar_producto_academico' %}" class="btn-agregar">+ Agregar</a>
         </div>
-        
-        {% if productos_laborales %}
-            <ul class="lista-items">
-                {% for prod in productos_laborales %}
-                <li class="item-panel">
-                    <div class="item-info">
-                        <h4>{{ prod.nombreproducto }}
-                            {% if prod.activarparaqueseveaenfront %}
-                                <span class="badge-activo">Visible</span>
-                            {% else %}
-                                <span class="badge-inactivo">Oculto</span>
-                            {% endif %}
-                        </h4>
-                        <p>📅 {{ prod.fechaproducto|date:"m/Y" }}</p>
-                        {% if prod.descripcion %}
-                        <p>{{ prod.descripcion|truncatewords:15 }}</p>
-                        {% endif %}
-                    </div>
-                    <div class="item-acciones">
-                        <a href="{% url 'curriculum:editar_producto_laboral' prod.idproductoslaborales %}" class="btn-editar">Editar</a>
-                        <a href="{% url 'curriculum:eliminar_producto_laboral' prod.idproductoslaborales %}" class="btn-eliminar" onclick="return confirm('¿Estás seguro de eliminar este producto laboral?')">Eliminar</a>
-                    </div>
-                </li>
-                {% endfor %}
-            </ul>
-        {% else %}
-            <div class="sin-datos">No hay productos laborales registrados</div>
-        {% endif %}
+        {% for prod in productos_academicos %}
+        <div class="item-panel">
+            <div>{{ prod.nombrerecurso }}</div>
+            <a href="{% url 'curriculum:editar_producto_academico' prod.idproductoacademico %}" class="btn-editar">Editar</a>
+        </div>
+        {% endfor %}
     </div>
-    
-    <!-- VENTA GARAGE -->
+
     <div class="seccion-panel">
         <div class="seccion-titulo">
-            <span>Venta Garage ({{ ventas.count }})</span>
-            {% if user.is_superuser %}
-        <a href="{% url 'curriculum:agregar_venta' %}" class="btn-agregar">
-            Agregar Artículo
-        </a>
-        {% endif %}
+            <span>Productos Laborales</span>
+            <a href="{% url 'curriculum:agregar_producto_laboral' %}" class="btn-agregar">+ Agregar</a>
         </div>
-        
-        {% if ventas %}
-            <ul class="lista-items">
-                {% for venta in ventas %}
-                <li class="item-panel">
-                    <div class="item-info">
-                        <h4>{{ venta.nombreproducto }}
-                            {% if venta.activarparaqueseveaenfront %}
-                                <span class="badge-activo">Visible</span>
-                            {% else %}
-                                <span class="badge-inactivo">Oculto</span>
-                            {% endif %}
-                        </h4>
-                        <p>${{ venta.valordelbien }} | Estado: {{ venta.estadoproducto }}</p>
-                        {% if venta.descripcion %}
-                        <p>{{ venta.descripcion|truncatewords:15 }}</p>
-                        {% endif %}
-                    </div>
-                    <div class="item-acciones">
-                        <a href="{% url 'curriculum:editar_venta' venta.idventagarage %}" class="btn-editar">✏️ Editar</a>
-                        <a href="{% url 'curriculum:eliminar_venta' venta.idventagarage %}" class="btn-eliminar" onclick="return confirm('¿Estás seguro de eliminar este artículo?')">Eliminar</a>
-                    </div>
-                </li>
-                {% endfor %}
-            </ul>
-        {% else %}
-            <div class="sin-datos">No hay artículos en venta</div>
-        {% endif %}
+        {% for pl in productos_laborales %}
+        <div class="item-panel">
+            <div>{{ pl.nombreproducto }}</div>
+            <a href="{% url 'curriculum:editar_producto_laboral' pl.idproductoslaborales %}" class="btn-editar">Editar</a>
+        </div>
+        {% endfor %}
     </div>
-    
-    <!-- ACCIONES RÁPIDAS -->
-    <div class="acciones-rapidas">
-        <a href="{% url 'curriculum:mi_hoja_vida' %}" class="btn-ver-cv">Ver Hoja de Vida Completa</a>
+
+    <div class="seccion-panel">
+        <div class="seccion-titulo">
+            <span>Venta Garage</span>
+            <a href="{% url 'curriculum:agregar_venta' %}" class="btn-agregar">+ Agregar</a>
+        </div>
+        {% for v in ventas %}
+        <div class="item-panel">
+            <div>{{ v.nombreproducto }} - ${{ v.valordelbien }}</div>
+            <a href="{% url 'curriculum:editar_venta' v.idventagarage %}" class="btn-editar">Editar</a>
+        </div>
+        {% endfor %}
+    </div>
+
+    <div style="text-align: center; margin: 40px 0;">
+        <a href="{% url 'curriculum:mi_hoja_vida' %}" class="btn-agregar" style="background:#00b894; padding: 15px 30px; font-size: 1.2em;">Ver Hoja de Vida Pública</a>
     </div>
 </div>
 {% endblock %}

@@ -1,28 +1,43 @@
 from django.db import models
 from django.core.validators import RegexValidator
+from django.core.exceptions import ValidationError
+from datetime import date
+from cloudinary.models import CloudinaryField
 
-# TABLA PRINCIPAL: DATOS PERSONALES
+# --- FUNCIONES DE VALIDACIÓN PROFESIONALES ---
+
+def validar_fecha_no_futura(value):
+    if value and value > date.today():
+        raise ValidationError('La fecha ingresada no puede ser posterior a la fecha actual.')
+
+def validar_rango_edad_realista(value):
+    if value and value < date(date.today().year - 100, 1, 1):
+        raise ValidationError('La fecha ingresada es demasiado antigua (límite de 100 años).')
+
+# --- 1. DATOS PERSONALES ---
 class DatosPersonales(models.Model):
-    SEXO_CHOICES = [
-        ('H', 'Hombre'),
-        ('M', 'Mujer'),
-    ]
+    SEXO_CHOICES = [('H', 'Hombre'), ('M', 'Mujer')]
     
     idperfil = models.AutoField(primary_key=True)
     descripcionperfil = models.CharField(max_length=50, blank=True, null=True)
     perfilactivo = models.IntegerField(default=1)
     apellidos = models.CharField(max_length=60)
     nombres = models.CharField(max_length=60)
-
-    foto_perfil = models.ImageField(upload_to='fotos_perfil/', blank=True, null=True)
-    
+    foto_perfil = CloudinaryField('image', folder='fotos_perfil/', blank=True, null=True)
     nacionalidad = models.CharField(max_length=20, blank=True, null=True)
     lugarnacimiento = models.CharField(max_length=60, blank=True, null=True)
-    fechanacimiento = models.DateField(blank=True, null=True)
+    
+    # Aplicación de validadores profesionales
+    fechanacimiento = models.DateField(
+        blank=True, 
+        null=True, 
+        validators=[validar_fecha_no_futura, validar_rango_edad_realista]
+    )
+    
     numerocedula = models.CharField(
         max_length=10, 
         unique=True,
-        validators=[RegexValidator(r'^\d{10}$', 'La cédula debe tener 10 dígitos')]
+        validators=[RegexValidator(r'^\d{10}$', 'La cédula debe contener exactamente 10 dígitos numéricos')]
     )
     sexo = models.CharField(max_length=1, choices=SEXO_CHOICES)
     estadocivil = models.CharField(max_length=50, blank=True, null=True)
@@ -33,23 +48,34 @@ class DatosPersonales(models.Model):
     direcciondomiciliaria = models.CharField(max_length=50, blank=True, null=True)
     sitioweb = models.CharField(max_length=60, blank=True, null=True)
     
+    # Flags de control para visibilidad en PDF y Front-end
+    mostrar_experiencia = models.BooleanField(default=True)
+    mostrar_reconocimientos = models.BooleanField(default=True)
+    mostrar_cursos = models.BooleanField(default=True)
+    mostrar_productos_academicos = models.BooleanField(default=True)
+    mostrar_productos_laborales = models.BooleanField(default=True)
+    mostrar_venta_garage = models.BooleanField(default=False)
+
+    # --- MENÚ DE SELECCIÓN PARA EL PDF ---
+    imprimir_experiencia = models.BooleanField(default=True, verbose_name="¿Imprimir Experiencia?")
+    imprimir_reconocimientos = models.BooleanField(default=True, verbose_name="¿Imprimir Reconocimientos?")
+    imprimir_cursos = models.BooleanField(default=True, verbose_name="¿Imprimir Cursos?")
+    imprimir_productos_academicos = models.BooleanField(default=True, verbose_name="¿Imprimir Productos Académicos?")
+    imprimir_productos_laborales = models.BooleanField(default=True, verbose_name="¿Imprimir Productos Laborales?")
+    imprimir_venta_garage = models.BooleanField(default=True, verbose_name="¿Imprimir Venta Garage?")
+    
     class Meta:
         db_table = 'datospersonales'
         verbose_name = 'Datos Personales'
         verbose_name_plural = 'Datos Personales'
-    
+
     def __str__(self):
         return f"{self.nombres} {self.apellidos}"
 
-
-# EXPERIENCIA LABORAL
+# --- 2. EXPERIENCIA LABORAL ---
 class ExperienciaLaboral(models.Model):
     idexperiencialaboral = models.AutoField(primary_key=True)
-    idperfilconqueestaactivo = models.ForeignKey(
-        DatosPersonales, 
-        on_delete=models.CASCADE,
-        related_name='experiencias'
-    )
+    idperfilconqueestaactivo = models.ForeignKey(DatosPersonales, on_delete=models.CASCADE, related_name='experiencias')
     cargodesempenado = models.CharField(max_length=100)
     nombrempresa = models.CharField(max_length=50)
     lugarempresa = models.CharField(max_length=50, blank=True, null=True)
@@ -57,66 +83,49 @@ class ExperienciaLaboral(models.Model):
     sitiowebempresa = models.CharField(max_length=100, blank=True, null=True)
     nombrecontactoempresarial = models.CharField(max_length=100, blank=True, null=True)
     telefonocontactoempresarial = models.CharField(max_length=60, blank=True, null=True)
-    fechainiciogestion = models.DateField()
-    fechafingestion = models.DateField(blank=True, null=True)
+    
+    fechainiciogestion = models.DateField(validators=[validar_fecha_no_futura])
+    fechafingestion = models.DateField(blank=True, null=True, validators=[validar_fecha_no_futura])
+    
     descripcionfunciones = models.TextField(blank=True, null=True)
     activarparaqueseveaenfront = models.BooleanField(default=True)
-    rutacertificado = models.FileField(upload_to='certificados/experiencia/', blank=True, null=True)
+    rutacertificado = CloudinaryField('raw', folder='certificados/experiencia/', blank=True, null=True)
     
     class Meta:
         db_table = 'experiencialaboral'
-        verbose_name = 'Experiencia Laboral'
-        verbose_name_plural = 'Experiencias Laborales'
-        ordering = ['-fechainiciogestion']
+        ordering = ['-fechainiciogestion'] # Cronología descendente
     
-    def __str__(self):
-        return f"{self.cargodesempenado} en {self.nombrempresa}"
+    def clean(self):
+        if self.fechafingestion and self.fechainiciogestion:
+            if self.fechafingestion < self.fechainiciogestion:
+                raise ValidationError('La fecha de finalización no puede ser cronológicamente anterior a la fecha de inicio.')
 
-
-# RECONOCIMIENTOS
+# --- 3. RECONOCIMIENTOS ---
 class Reconocimientos(models.Model):
-    TIPO_CHOICES = [
-        ('Académico', 'Académico'),
-        ('Público', 'Público'),
-        ('Privado', 'Privado'),
-    ]
+    TIPO_CHOICES = [('Académico', 'Académico'), ('Público', 'Público'), ('Privado', 'Privado')]
     
     idreconocimiento = models.AutoField(primary_key=True)
-    idperfilconqueestaactivo = models.ForeignKey(
-        DatosPersonales, 
-        on_delete=models.CASCADE,
-        related_name='reconocimientos'
-    )
+    idperfilconqueestaactivo = models.ForeignKey(DatosPersonales, on_delete=models.CASCADE, related_name='reconocimientos')
     tiporeconocimiento = models.CharField(max_length=100, choices=TIPO_CHOICES)
-    fechareconocimiento = models.DateField()
+    fechareconocimiento = models.DateField(validators=[validar_fecha_no_futura])
     descripcionreconocimiento = models.TextField(blank=True, null=True)
     entidadpatrocinadora = models.CharField(max_length=100, blank=True, null=True)
     nombrecontactoauspicia = models.CharField(max_length=100, blank=True, null=True)
     telefonocontactoauspicia = models.CharField(max_length=60, blank=True, null=True)
     activarparaqueseveaenfront = models.BooleanField(default=True)
-    rutacertificado = models.FileField(upload_to='certificados/reconocimientos/', blank=True, null=True)
+    rutacertificado = CloudinaryField('raw', folder='certificados/reconocimientos/', blank=True, null=True)
     
     class Meta:
         db_table = 'reconocimientos'
-        verbose_name = 'Reconocimiento'
-        verbose_name_plural = 'Reconocimientos'
         ordering = ['-fechareconocimiento']
-    
-    def __str__(self):
-        return f"{self.tiporeconocimiento} - {self.descripcionreconocimiento}"
 
-
-# CURSOS REALIZADOS
+# --- 4. CURSOS REALIZADOS ---
 class CursosRealizados(models.Model):
     idcursorealizado = models.AutoField(primary_key=True)
-    idperfilconqueestaactivo = models.ForeignKey(
-        DatosPersonales, 
-        on_delete=models.CASCADE,
-        related_name='cursos'
-    )
+    idperfilconqueestaactivo = models.ForeignKey(DatosPersonales, on_delete=models.CASCADE, related_name='cursos')
     nombrecurso = models.CharField(max_length=100)
-    fechainicio = models.DateField()
-    fechafin = models.DateField(blank=True, null=True)
+    fechainicio = models.DateField(validators=[validar_fecha_no_futura])
+    fechafin = models.DateField(blank=True, null=True, validators=[validar_fecha_no_futura])
     totalhoras = models.IntegerField(blank=True, null=True)
     descripcioncurso = models.TextField(blank=True, null=True)
     entidadpatrocinadora = models.CharField(max_length=100, blank=True, null=True)
@@ -124,106 +133,70 @@ class CursosRealizados(models.Model):
     telefonocontactoauspicia = models.CharField(max_length=60, blank=True, null=True)
     emailempresapatrocinadora = models.EmailField(max_length=60, blank=True, null=True)
     activarparaqueseveaenfront = models.BooleanField(default=True)
-    rutacertificado = models.FileField(upload_to='certificados/cursos/', blank=True, null=True)
+    rutacertificado = CloudinaryField('raw', folder='certificados/cursos/', blank=True, null=True)
     
     class Meta:
         db_table = 'cursosrealizados'
-        verbose_name = 'Curso Realizado'
-        verbose_name_plural = 'Cursos Realizados'
         ordering = ['-fechainicio']
-    
-    def __str__(self):
-        return self.nombrecurso
 
+    def clean(self):
+        if self.fechafin and self.fechainicio:
+            if self.fechafin < self.fechainicio:
+                raise ValidationError('La fecha de culminación del curso debe ser posterior a la de inicio.')
 
-# PRODUCTOS ACADÉMICOS
+# --- 5. PRODUCTOS ACADÉMICOS ---
 class ProductosAcademicos(models.Model):
+    CATEGORIA_CHOICES = [
+        ('Ingeniería', 'Ingeniería'), ('Tecnología', 'Tecnología'),
+        ('Docencia', 'Docencia'), ('Investigación', 'Investigación'), ('Otro', 'Otro')
+    ]
+
     idproductoacademico = models.AutoField(primary_key=True)
-    idperfilconqueestaactivo = models.ForeignKey(
-        DatosPersonales, 
-        on_delete=models.CASCADE,
-        related_name='productos_academicos'
-    )
+    idperfilconqueestaactivo = models.ForeignKey(DatosPersonales, on_delete=models.CASCADE, related_name='productos_academicos')
     nombrerecurso = models.CharField(max_length=100)
-    clasificador = models.CharField(max_length=100, blank=True, null=True)
+    clasificador = models.CharField(max_length=100, choices=CATEGORIA_CHOICES)
     descripcion = models.TextField(blank=True, null=True)
-    
-
-    # CAMPOS NUEVOS
-    archivo = models.FileField(
-        upload_to='productos_academicos/', 
-        blank=True, 
-        null=True
-    )
-    link = models.URLField(
-        blank=True,
-        null=True
-    )
-
+    archivo = CloudinaryField('raw', folder='productos_academicos/', blank=True, null=True)
+    link = models.URLField(blank=True, null=True)
     activarparaqueseveaenfront = models.BooleanField(default=True)
+    fecha_registro = models.DateField(default=date.today, validators=[validar_fecha_no_futura])
 
     class Meta:
         db_table = 'productosacademicos'
-        verbose_name = 'Producto Académico'
-        verbose_name_plural = 'Productos Académicos'
-    
-    def __str__(self):
-        return self.nombrerecurso
+        ordering = ['-fecha_registro']
 
-
-# PRODUCTOS LABORALES
+# --- 6. PRODUCTOS LABORALES ---
 class ProductosLaborales(models.Model):
     idproductoslaborales = models.AutoField(primary_key=True)
-    idperfilconqueestaactivo = models.ForeignKey(
-        DatosPersonales, 
-        on_delete=models.CASCADE,
-        related_name='productos_laborales'
-    )
+    idperfilconqueestaactivo = models.ForeignKey(DatosPersonales, on_delete=models.CASCADE, related_name='productos_laborales')
     nombreproducto = models.CharField(max_length=100)
-    fechaproducto = models.DateField()
+    fechaproducto = models.DateField(validators=[validar_fecha_no_futura])
     descripcion = models.TextField(blank=True, null=True)
-
-    archivo = models.FileField(upload_to='productos_laborales/', blank=True, null=True)
+    archivo = CloudinaryField('raw', folder='productos_laborales/', blank=True, null=True)
     link = models.URLField(blank=True, null=True)
-
     activarparaqueseveaenfront = models.BooleanField(default=True)
     
     class Meta:
         db_table = 'productoslaborales'
-        verbose_name = 'Producto Laboral'
-        verbose_name_plural = 'Productos Laborales'
         ordering = ['-fechaproducto']
-    
-    def __str__(self):
-        return self.nombreproducto
 
-
-# VENTA GARAGE
+# --- 7. VENTA GARAGE ---
 class VentaGarage(models.Model):
-    ESTADO_CHOICES = [
-        ('Bueno', 'Bueno'),
-        ('Regular', 'Regular'),
-    ]
+    ESTADO_PRODUCTO_CHOICES = [('Bueno', 'Bueno'), ('Regular', 'Regular')]
     
     idventagarage = models.AutoField(primary_key=True)
-    idperfilconqueestaactivo = models.ForeignKey(
-        DatosPersonales, 
-        on_delete=models.CASCADE,
-        related_name='ventas_garage'
-    )
+    idperfilconqueestaactivo = models.ForeignKey(DatosPersonales, on_delete=models.CASCADE, related_name='ventas_garage')
     nombreproducto = models.CharField(max_length=100)
-    estadoproducto = models.CharField(max_length=40, choices=ESTADO_CHOICES)
+    estadoproducto = models.CharField(max_length=40, choices=ESTADO_PRODUCTO_CHOICES)
     descripcion = models.TextField(blank=True, null=True)
-    valordelbien = models.DecimalField(max_digits=7, decimal_places=2)
-
-    imagen = models.ImageField(upload_to='ventas_garage/', blank=True, null=True)
+    valordelbien = models.DecimalField(max_digits=10, decimal_places=2)
+    
+    # Imagen obligatoria para ventas y fecha automática
+    imagen_producto = CloudinaryField('image', folder='ventas_garage/', blank=True, null=True)
+    fecha_publicacion = models.DateTimeField(auto_now_add=True) 
 
     activarparaqueseveaenfront = models.BooleanField(default=True)
     
     class Meta:
         db_table = 'ventagarage'
-        verbose_name = 'Venta Garage'
-        verbose_name_plural = 'Ventas Garage'
-    
-    def __str__(self):
-        return f"{self.nombreproducto} - ${self.valordelbien}"
+        ordering = ['-fecha_publicacion']

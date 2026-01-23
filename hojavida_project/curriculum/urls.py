@@ -19,6 +19,7 @@ urlpatterns = [
     path('panel-gestion/', views.panel_gestion, name='panel_gestion'),
     
     # Datos personales
+    path('agregar-datos-personales/', views.agregar_datos_personales, name='agregar_datos_personales'),
     path('editar-datos-personales/', views.editar_datos_personales, name='editar_datos_personales'),
     
     # Experiencia laboral

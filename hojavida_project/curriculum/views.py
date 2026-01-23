@@ -12,6 +12,7 @@ from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib import messages
+from .forms import SeleccionSeccionesForm
 from .models import (
     DatosPersonales,
     ExperienciaLaboral,
@@ -100,23 +101,31 @@ def mi_perfil(request):
 # PANEL DE GESTION (como el admin de Django)
 @login_required
 def panel_gestion(request):
-    # 1. Buscamos cualquier perfil que exista, sin filtros que bloqueen
-    perfil = DatosPersonales.objects.all().first()
-    
-    # 2. Si NO hay perfil, mandamos una página limpia con un botón para crear
+    perfil = DatosPersonales.objects.filter(perfilactivo=1).first()
+
     if not perfil:
-        return render(request, 'curriculum/panel_gestion.html', {'sin_perfil': True})
-    
-    # 3. Si hay perfil, cargamos todo lo demás
+        return redirect('curriculum:agregar_datos_personales')
+
+    # Inicializamos el formulario para que SIEMPRE exista la variable 'form_secciones'
+    if request.method == 'POST':
+        form_secciones = SeleccionSeccionesForm(request.POST, instance=perfil)
+        if form_secciones.is_valid():
+            form_secciones.save()
+            messages.success(request, 'Preferencias de PDF actualizadas correctamente.')
+            return redirect('curriculum:panel_gestion')
+    else:
+        form_secciones = SeleccionSeccionesForm(instance=perfil)
+
+    # Cargamos el contexto
     context = {
         'perfil': perfil,
+        'form_secciones': form_secciones, # Aquí se pasa el formulario sin errores
         'experiencias': ExperienciaLaboral.objects.filter(idperfilconqueestaactivo=perfil),
         'reconocimientos': Reconocimientos.objects.filter(idperfilconqueestaactivo=perfil),
         'cursos': CursosRealizados.objects.filter(idperfilconqueestaactivo=perfil),
         'productos_academicos': ProductosAcademicos.objects.filter(idperfilconqueestaactivo=perfil),
         'productos_laborales': ProductosLaborales.objects.filter(idperfilconqueestaactivo=perfil),
         'ventas': VentaGarage.objects.filter(idperfilconqueestaactivo=perfil),
-        'sin_perfil': False
     }
     
     return render(request, 'curriculum/panel_gestion.html', context)
@@ -369,15 +378,15 @@ def agregar_venta(request):
     perfil = DatosPersonales.objects.filter(perfilactivo=1).first()
     
     if request.method == 'POST':
-        form = VentaGarageForm(request.POST)
+        form = VentaGarageForm(request.POST, request.FILES) 
         if form.is_valid():
             venta = form.save(commit=False)
             venta.idperfilconqueestaactivo = perfil
             venta.save()
-            messages.success(request, 'Artículo agregado.')
+            messages.success(request, 'Artículo agregado con imagen.')
             return redirect('curriculum:panel_gestion')
     else:
-        form = VentaGarageForm()
+        form = VentaGarageForm(equest.POST, request.FILES)
     
     return render(request, 'curriculum/agregar_venta.html', {'form': form})
 
@@ -387,17 +396,16 @@ def editar_venta(request, pk):
     venta = get_object_or_404(VentaGarage, pk=pk)
     
     if request.method == 'POST':
-        form = VentaGarageForm(request.POST, instance=venta)
+        form = VentaGarageForm(request.POST, request.FILES, instance=venta)
         if form.is_valid():
             form.save()
-            messages.success(request, 'Artículo actualizado.')
+            messages.success(request, 'Artículo actualizado con éxito.')
             return redirect('curriculum:panel_gestion')
     else:
         form = VentaGarageForm(instance=venta)
     
     return render(request, 'curriculum/editar_venta.html', {'form': form, 'venta': venta})
 
-# ELIMINAR VENTA GARAGE
 @login_required
 def eliminar_venta(request, pk):
     venta = get_object_or_404(VentaGarage, pk=pk)

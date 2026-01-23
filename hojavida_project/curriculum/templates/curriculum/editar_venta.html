@@ -134,6 +134,15 @@
             grid-template-columns: 1fr;
         }
     }
+
+    .current-image-preview {
+        margin-bottom: 15px;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        padding: 10px;
+        background: #f9f9f9;
+        display: inline-block;
+    }
 </style>
 {% endblock %}
 
@@ -144,7 +153,7 @@
         <p>Actualiza la información del artículo</p>
     </div>
     
-    <form method="POST" novalidate>
+    <form method="POST" enctype="multipart/form-data" novalidate>
         {% csrf_token %}
         
         {% if form.non_field_errors %}
@@ -158,6 +167,20 @@
             {{ form.nombreproducto }}
             {% if form.nombreproducto.errors %}
                 <div class="form-errors">{{ form.nombreproducto.errors }}</div>
+            {% endif %}
+        </div>
+
+        <div class="form-group">
+            <label>Imagen del Producto</label>
+            
+            {# Si ya existe una imagen, Django mostrará un enlace a la actual por defecto #}
+            {{ form.imagen_producto }}
+            
+            <small style="color: #6c757d; display: block; margin-top: 5px;">
+                Selecciona un nuevo archivo solo si deseas cambiar la imagen actual.
+            </small>
+            {% if form.imagen_producto.errors %}
+                <div class="form-errors">{{ form.imagen_producto.errors }}</div>
             {% endif %}
         </div>
         

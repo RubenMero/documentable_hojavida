@@ -134,6 +134,11 @@
             grid-template-columns: 1fr;
         }
     }
+
+    input[type="file"] {
+        padding: 8px;
+        background: #f8f9fa;
+    }
 </style>
 {% endblock %}
 
@@ -144,7 +149,7 @@
         <p>Publica artículos que quieras vender</p>
     </div>
     
-    <form method="POST" novalidate>
+    <form method="POST" enctype="multipart/form-data">
         {% csrf_token %}
         
         {% if form.non_field_errors %}
@@ -158,6 +163,15 @@
             {{ form.nombreproducto }}
             {% if form.nombreproducto.errors %}
                 <div class="form-errors">{{ form.nombreproducto.errors }}</div>
+            {% endif %}
+        </div>
+
+        <div class="form-group">
+            <label for="{{ form.imagen_producto.id_for_label }}">Imagen del Producto</label>
+            {{ form.imagen_producto }}
+            <small style="color: #6c757d;">Formatos aceptados: JPG, PNG, JPEG.</small>
+            {% if form.imagen_producto.errors %}
+                <div class="form-errors">{{ form.imagen_producto.errors }}</div>
             {% endif %}
         </div>
         
