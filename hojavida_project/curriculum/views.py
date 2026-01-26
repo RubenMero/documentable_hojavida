@@ -468,190 +468,48 @@ def mi_hoja_vida(request):
         return HttpResponse(f"Error al cargar: {e}")
 
 
+from django.template.loader import render_to_string
+from django.http import HttpResponse
+from weasyprint import HTML
+import tempfile
+
 def descargar_pdf(request):
-    """Genera y descarga la hoja de vida en PDF"""
+    """Genera y descarga la hoja de vida en PDF usando el diseño HTML"""
+    # 1. Obtenemos el perfil activo
     perfil = DatosPersonales.objects.filter(perfilactivo=1).first()
     
     if not perfil:
         messages.error(request, 'No hay perfil disponible')
-        return redirect('curriculum:home')  
-    # Crear el PDF en memoria
-    buffer = BytesIO()
-    doc = SimpleDocTemplate(buffer, pagesize=letter, rightMargin=72, leftMargin=72, topMargin=72, bottomMargin=18)  
-    # Estilos
-    styles = getSampleStyleSheet()
-    title_style = ParagraphStyle(
-        'CustomTitle',
-        parent=styles['Heading1'],
-        fontSize=24,
-        textColor=colors.HexColor('#2c3e50'),
-        spaceAfter=30,
-        alignment=TA_CENTER
-    )
-    
-    heading_style = ParagraphStyle(
-        'CustomHeading',
-        parent=styles['Heading2'],
-        fontSize=16,
-        textColor=colors.HexColor('#667eea'),
-        spaceAfter=12,
-        spaceBefore=12
-    )
-    
-    normal_style = styles['Normal']
-    
-    # Contenido del PDF
-    story = []
-    
-    # Título
-    story.append(Paragraph(f"{perfil.nombres} {perfil.apellidos}", title_style))
-    if perfil.descripcionperfil:
-        story.append(Paragraph(perfil.descripcionperfil, styles['Italic']))
-    story.append(Spacer(1, 0.3*inch))
-    
-    # Datos Personales
-    story.append(Paragraph("DATOS PERSONALES", heading_style))
-    datos_personales = [
-        ['Cédula:', perfil.numerocedula],
-        ['Fecha de Nacimiento:', perfil.fechanacimiento.strftime('%d/%m/%Y') if perfil.fechanacimiento else 'No especificada'],
-        ['Sexo:', 'Hombre' if perfil.sexo == 'H' else 'Mujer'],
-        ['Nacionalidad:', perfil.nacionalidad or 'No especificada'],
-    ]
-    
-    if perfil.telefonoconvencional:
-        datos_personales.append(['Teléfono:', perfil.telefonoconvencional])
-    
-    if perfil.direcciondomiciliaria:
-        datos_personales.append(['Dirección:', perfil.direcciondomiciliaria])
-    
-    if perfil.sitioweb:
-        datos_personales.append(['Sitio Web:', perfil.sitioweb])
-    
-    tabla_datos = Table(datos_personales, colWidths=[2*inch, 4*inch])
-    tabla_datos.setStyle(TableStyle([
-        ('BACKGROUND', (0, 0), (0, -1), colors.HexColor('#f8f9fa')),
-        ('TEXTCOLOR', (0, 0), (-1, -1), colors.HexColor('#2c3e50')),
-        ('ALIGN', (0, 0), (-1, -1), 'LEFT'),
-        ('FONTNAME', (0, 0), (0, -1), 'Helvetica-Bold'),
-        ('FONTSIZE', (0, 0), (-1, -1), 10),
-        ('BOTTOMPADDING', (0, 0), (-1, -1), 12),
-        ('GRID', (0, 0), (-1, -1), 0.5, colors.grey)
-    ]))
-    story.append(tabla_datos)
-    story.append(Spacer(1, 0.3*inch))
-    
-    # Experiencia Laboral
-    experiencias = ExperienciaLaboral.objects.filter(
-        idperfilconqueestaactivo=perfil,
-        activarparaqueseveaenfront=True
-    )
-    
-    if experiencias.exists():
-        story.append(Paragraph("EXPERIENCIA LABORAL", heading_style))
-        for exp in experiencias:
-            story.append(Paragraph(f"<b>{exp.cargodesempenado}</b>", normal_style))
-            story.append(Paragraph(f"{exp.nombrempresa}", normal_style))
-            fecha_fin = exp.fechafingestion.strftime('%m/%Y') if exp.fechafingestion else 'Actualidad'
-            story.append(Paragraph(f"{exp.fechainiciogestion.strftime('%m/%Y')} - {fecha_fin}", normal_style))
-            if exp.lugarempresa:
-                story.append(Paragraph(f"📍 {exp.lugarempresa}", normal_style))
-            if exp.descripcionfunciones:
-                story.append(Paragraph(exp.descripcionfunciones, normal_style))
-            story.append(Spacer(1, 0.2*inch))
-    
-    # Reconocimientos
-    reconocimientos = Reconocimientos.objects.filter(
-        idperfilconqueestaactivo=perfil,
-        activarparaqueseveaenfront=True
-    )
-    
-    if reconocimientos.exists():
-        story.append(Paragraph("RECONOCIMIENTOS", heading_style))
-        for rec in reconocimientos:
-            story.append(Paragraph(f"<b>{rec.descripcionreconocimiento}</b>", normal_style))
-            story.append(Paragraph(f"{rec.tiporeconocimiento} - {rec.fechareconocimiento.strftime('%d/%m/%Y')}", normal_style))
-            if rec.entidadpatrocinadora:
-                story.append(Paragraph(f"Otorgado por: {rec.entidadpatrocinadora}", normal_style))
-            story.append(Spacer(1, 0.2*inch))
-    
-    # Cursos
-    cursos = CursosRealizados.objects.filter(
-        idperfilconqueestaactivo=perfil,
-        activarparaqueseveaenfront=True
-    )
-    
-    if cursos.exists():
-        story.append(Paragraph("CURSOS REALIZADOS", heading_style))
-        for curso in cursos:
-            story.append(Paragraph(f"<b>{curso.nombrecurso}</b>", normal_style))
-            if curso.entidadpatrocinadora:
-                story.append(Paragraph(f"Impartido por: {curso.entidadpatrocinadora}", normal_style))
-            fecha_info = f"{curso.fechainicio.strftime('%m/%Y')}"
-            if curso.fechafin:
-                fecha_info += f" - {curso.fechafin.strftime('%m/%Y')}"
-            if curso.totalhoras:
-                fecha_info += f" | {curso.totalhoras} horas"
-            story.append(Paragraph(fecha_info, normal_style))
-            if curso.descripcioncurso:
-                story.append(Paragraph(curso.descripcioncurso, normal_style))
-            story.append(Spacer(1, 0.2*inch))
-    
-    # Productos Académicos
-    productos_academicos = ProductosAcademicos.objects.filter(
-        idperfilconqueestaactivo=perfil,
-        activarparaqueseveaenfront=True
-    )
-    
-    if productos_academicos.exists():
-        story.append(Paragraph("PRODUCTOS ACADÉMICOS", heading_style))
-        for prod in productos_academicos:
-            story.append(Paragraph(f"<b>{prod.nombrerecurso}</b>", normal_style))
-            if prod.clasificador:
-                story.append(Paragraph(f"Categoría: {prod.clasificador}", normal_style))
-            if prod.descripcion:
-                story.append(Paragraph(prod.descripcion, normal_style))
-            story.append(Spacer(1, 0.2*inch))
-    
-    # Productos Laborales
-    productos_laborales = ProductosLaborales.objects.filter(
-        idperfilconqueestaactivo=perfil,
-        activarparaqueseveaenfront=True
-    )
-    
-    if productos_laborales.exists():
-        story.append(Paragraph("PRODUCTOS LABORALES", heading_style))
-        for prod in productos_laborales:
-            story.append(Paragraph(f"<b>{prod.nombreproducto}</b>", normal_style))
-            story.append(Paragraph(f"{prod.fechaproducto.strftime('%m/%Y')}", normal_style))
-            if prod.descripcion:
-                story.append(Paragraph(prod.descripcion, normal_style))
-            story.append(Spacer(1, 0.2*inch))
-    
-    # Venta Garage
-    ventas = VentaGarage.objects.filter(
-        idperfilconqueestaactivo=perfil,
-        activarparaqueseveaenfront=True
-    )
-    
-    if ventas.exists():
-        story.append(Paragraph("VENTA GARAGE", heading_style))
-        for venta in ventas:
-            story.append(Paragraph(f"<b>{venta.nombreproducto}</b>", normal_style))
-            story.append(Paragraph(f"Precio: ${venta.valordelbien} | Estado: {venta.estadoproducto}", normal_style))
-            if venta.descripcion:
-                story.append(Paragraph(venta.descripcion, normal_style))
-            story.append(Spacer(1, 0.2*inch))
-    
-    # Construir PDF
-    doc.build(story)
-    
-    # Obtener el valor del BytesIO buffer
-    pdf = buffer.getvalue()
-    buffer.close()
-    
-    # Crear la respuesta HTTP
-    response = HttpResponse(content_type='application/pdf')
+        return redirect('curriculum:home')
+
+    # 2. Obtenemos todos los datos igual que en tu vista de la hoja de vida
+    experiencias = ExperienciaLaboral.objects.filter(idperfilconqueestaactivo=perfil, activarparaqueseveaenfront=True)
+    reconocimientos = Reconocimientos.objects.filter(idperfilconqueestaactivo=perfil, activarparaqueseveaenfront=True)
+    cursos = CursosRealizados.objects.filter(idperfilconqueestaactivo=perfil, activarparaqueseveaenfront=True)
+    productos_academicos = ProductosAcademicos.objects.filter(idperfilconqueestaactivo=perfil, activarparaqueseveaenfront=True)
+    productos_laborales = ProductosLaborales.objects.filter(idperfilconqueestaactivo=perfil, activarparaqueseveaenfront=True)
+    ventas = VentaGarage.objects.filter(idperfilconqueestaactivo=perfil, activarparaqueseveaenfront=True)
+
+    # 3. Renderizamos el mismo HTML de la web a una cadena de texto
+    # Pasamos 'is_pdf': True para ocultar botones en el PDF final
+    html_string = render_to_string('curriculum/mi_hoja_vida.html', {
+        'perfil': perfil,
+        'experiencias': experiencias,
+        'reconocimientos': reconocimientos,
+        'cursos': cursos,
+        'productos_academicos': productos_academicos,
+        'productos_laborales': productos_laborales,
+        'ventas': ventas,
+        'is_pdf': True, 
+    })
+
+    # 4. Generamos el PDF con WeasyPrint
+    # base_url permite que encuentre las imágenes y el CSS
+    html = HTML(string=html_string, base_url=request.build_absolute_uri())
+    pdf = html.write_pdf()
+
+    # 5. Respuesta de descarga
+    response = HttpResponse(pdf, content_type='application/pdf')
     response['Content-Disposition'] = f'attachment; filename="CV_{perfil.nombres}_{perfil.apellidos}.pdf"'
-    response.write(pdf)
     
     return response
