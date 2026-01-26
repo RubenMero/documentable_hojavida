@@ -113,17 +113,36 @@ class ProductosAcademicosForm(forms.ModelForm):
         model = ProductosAcademicos
         fields = ['nombrerecurso', 'clasificador', 'descripcion', 'archivo', 'link', 'activarparaqueseveaenfront']
         widgets = {
-            'descripcion': forms.Textarea(attrs={'rows': 3}),
+            'nombrerecurso': forms.TextInput(attrs={'class': 'form-control'}),
+            'clasificador': forms.TextInput(attrs={'class': 'form-control'}),
+            'descripcion': forms.Textarea(attrs={'rows': 3, 'class': 'form-control'}),
+            'archivo': forms.FileInput(attrs={'class': 'form-control'}),
+            'link': forms.URLInput(attrs={'placeholder': 'https://ejemplo.com (Opcional)', 'class': 'form-control'}),
         }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Esto hace que el campo no sea obligatorio en el formulario
+        self.fields['link'].required = False
 
 class ProductosLaboralesForm(forms.ModelForm):
     class Meta:
         model = ProductosLaborales
         fields = ['nombreproducto', 'fechaproducto', 'descripcion', 'archivo', 'link', 'activarparaqueseveaenfront']
         widgets = {
-            'fechaproducto': forms.DateInput(attrs={'type': 'date'}),
-            'descripcion': forms.Textarea(attrs={'rows': 3}),
+            'nombreproducto': forms.TextInput(attrs={'class': 'form-control'}),
+            'fechaproducto': forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}),
+            'descripcion': forms.Textarea(attrs={'rows': 3, 'class': 'form-control'}),
+            'archivo': forms.FileInput(attrs={'class': 'form-control'}),
+            'link': forms.URLInput(attrs={'placeholder': 'https://ejemplo.com (Opcional)', 'class': 'form-control'}),
         }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Esto hace que el campo no sea obligatorio en el formulario
+        self.fields['link'].required = False
+
+
         
 class VentaGarageForm(forms.ModelForm):
     class Meta:

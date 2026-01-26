@@ -161,6 +161,8 @@ class ProductosAcademicos(models.Model):
     activarparaqueseveaenfront = models.BooleanField(default=True)
     fecha_registro = models.DateField(default=date.today, validators=[validar_fecha_no_futura])
 
+    link = models.URLField(max_length=500, blank=True, null=True)
+
     class Meta:
         db_table = 'productosacademicos'
         ordering = ['-fecha_registro']
@@ -175,6 +177,8 @@ class ProductosLaborales(models.Model):
     archivo = CloudinaryField('raw', folder='productos_laborales/', blank=True, null=True)
     link = models.URLField(blank=True, null=True)
     activarparaqueseveaenfront = models.BooleanField(default=True)
+
+    link = models.URLField(max_length=500, blank=True, null=True)
     
     class Meta:
         db_table = 'productoslaborales'
