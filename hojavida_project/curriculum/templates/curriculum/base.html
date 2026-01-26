@@ -5,163 +5,124 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}Hoja de Vida Automatizada{% endblock %}</title>
     
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap" rel="stylesheet">
-    
     <style>
         :root {
-            --bg-canvas: #f4f7f9;
-            --paper-white: #ffffff;
-            --primary-dark: #1a1c1e;
-            --accent-blue: #3b82f6;
-            --text-main: #2d3136;
-            --text-muted: #64748b;
+            --bg-body: #f0f2f5; /* Fondo gris claro para resaltar los bloques */
+            --block-bg: #ffffff;
+            --primary: #000000;
         }
-
-        * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            background: var(--bg-canvas);
-            color: var(--text-main);
-            line-height: 1.6;
+            font-family: -apple-system, system-ui, BlinkMacSystemFont, "Segoe UI", Roboto;
+            background-color: var(--bg-body);
+            margin: 0;
+            padding: 0;
         }
 
-        /* --- BOTONES DE GESTIÓN FLOTANTES (Solo Admin) --- */
-        .floating-nav {
-            position: fixed;
-            top: 25px;
-            right: 40px;
-            z-index: 1000;
-            display: flex;
-            gap: 12px;
-        }
-
-        .nav-button {
-            background: rgba(255, 255, 255, 0.9);
-            backdrop-filter: blur(8px);
-            padding: 10px 22px;
-            border-radius: 100px;
-            text-decoration: none;
-            color: var(--primary-dark);
-            font-size: 0.85rem;
-            font-weight: 600;
-            border: 1px solid rgba(0,0,0,0.08);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-            transition: all 0.3s ease;
-        }
-
-        .nav-button:hover {
-            transform: translateY(-2px);
-            background: var(--primary-dark);
-            color: white;
-        }
-
-        .nav-button.logout {
-            color: #ef4444;
-            border-color: rgba(239, 68, 68, 0.2);
-        }
-
-        /* --- TÍTULO EXTERIOR (Visible para todos) --- */
-        .site-header {
-            max-width: 1050px;
-            margin: 40px auto -30px auto;
-            padding: 0 20px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-
-        .brand-title {
-            font-size: 0.75rem;
-            font-weight: 800;
-            letter-spacing: 3px;
-            color: var(--primary-dark);
-            text-transform: uppercase;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .brand-title::before {
-            content: "";
-            width: 30px;
-            height: 2px;
-            background: var(--accent-blue);
-        }
-
-        /* --- CONTENEDOR DE LA HOJA (Efecto Papel Premium) --- */
-        main {
-            max-width: 1050px;
-            margin: 50px auto;
-            background: var(--paper-white);
-            min-height: 100vh;
-            padding: 70px;
-            position: relative;
-            box-shadow: 0 20px 60px -15px rgba(0, 0, 0, 0.05);
-            border-radius: 12px;
-        }
-
-        /* Detalle artístico lateral */
-        main::before {
-            content: "";
-            position: absolute;
-            top: 0; left: 0; width: 6px; height: 100%;
-            background: linear-gradient(to bottom, var(--primary-dark), var(--accent-blue));
-            border-radius: 12px 0 0 12px;
-        }
-
-        /* Mensajes del sistema */
-        .messages-container { max-width: 1050px; margin: 0 auto 20px auto; }
-        .alert { padding: 15px; border-radius: 10px; text-align: center; font-weight: 500; }
-        .alert-success { background: #ecfdf5; color: #065f46; }
-
-        /* Footer */
-        footer {
-            text-align: center;
+        /* TÍTULO CENTRADO Y GRANDE (FUERA DE LOS BLOQUES) */
+        .header-principal {
+            background: #000;
             padding: 40px 0;
-            color: var(--text-muted);
-            font-size: 0.85rem;
+            text-align: center;
+            margin-bottom: 30px;
         }
 
-        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-        .page-animation { animation: slideUp 0.8s ease-out; }
+        .header-principal h1 {
+            color: #fff;
+            font-size: 2.2rem;
+            letter-spacing: 5px;
+            text-transform: uppercase;
+            margin: 0;
+        }
 
-        @media (max-width: 768px) {
-            main { margin: 10px; padding: 30px; border-radius: 0; }
-            .floating-nav { position: relative; top: 0; right: 0; padding: 20px; justify-content: center; }
-            .site-header { flex-direction: column; text-align: center; gap: 10px; }
+        /* CONTENEDOR DE BOTÓN PDF (FUERA DE LA HOJA) */
+        .pdf-container {
+            max-width: 900px;
+            margin: 0 auto 20px auto;
+            display: flex;
+            justify-content: flex-end; /* Lo alinea a la derecha */
+        }
+
+        .btn-pdf {
+            background: #e74c3c; /* Color rojo PDF */
+            color: white;
+            padding: 12px 25px;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: bold;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            transition: transform 0.2s;
+        }
+
+        .btn-pdf:hover {
+            transform: scale(1.05);
+            background: #c0392b;
+        }
+
+        /* DISEÑO DE SECCIONES SEPARADAS */
+        .cv-block {
+            max-width: 900px;
+            margin: 0 auto 25px auto; /* Espacio entre bloques */
+            background: var(--block-bg);
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 2px 15px rgba(0,0,0,0.05);
+        }
+
+        /* Estilo para los títulos de cada sección dentro de su bloque */
+        .cv-block h2 {
+            border-bottom: 2px solid #eee;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+            font-size: 1.2rem;
+            color: var(--primary);
+        }
+
+        /* Estilos para el Admin */
+        .admin-nav {
+            position: fixed;
+            top: 15px;
+            right: 15px;
+            z-index: 1000;
+        }
+
+        .btn-admin {
+            background: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            text-decoration: none;
+            color: black;
+            font-size: 0.8rem;
+            font-weight: bold;
+            border: 1px solid #ddd;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
         }
     </style>
-    {% block extra_css %}{% endblock %}
 </head>
 <body>
 
     {% if user.is_authenticated and user.is_staff %}
-    <div class="floating-nav">
-        <a href="{% url 'curriculum:panel_gestion' %}" class="nav-button">Panel de Gestión</a>
-        
+    <div class="admin-nav">
+        <a href="{% url 'curriculum:panel_gestion' %}" class="btn-admin">PANEL</a>
         <form action="{% url 'curriculum:logout' %}" method="post" style="display: inline;">
             {% csrf_token %}
-            <button type="submit" class="nav-button logout" style="cursor: pointer; font-family: inherit;">Cerrar Sesión</button>
+            <button type="submit" class="btn-admin" style="cursor:pointer; border:none;">SALIR</button>
         </form>
     </div>
     {% endif %}
 
-
-    <header class="site-header page-animation">
-        <h1 class="brand-title">Hoja de Vida Automatizada</h1>
+    <header class="header-principal">
+        <h1>Hoja de Vida Automatizada</h1>
     </header>
 
-
-    {% if messages %}
-    <div class="messages-container">
-        {% for message in messages %}
-            <div class="alert alert-{{ message.tags }}">{{ message }}</div>
-        {% endfor %}
+    <div class="pdf-container">
+        <a href="{% url 'curriculum:descargar_pdf' %}" class="btn-pdf">
+            📄 Descargar Hoja de Vida (PDF)
+        </a>
     </div>
-    {% endif %}
 
-    <main class="page-animation">
+    <main>
         {% block content %}
         {% endblock %}
     </main>
@@ -173,6 +134,5 @@
         </p>
     </footer>
 
-    {% block extra_js %}{% endblock %}
 </body>
 </html>
