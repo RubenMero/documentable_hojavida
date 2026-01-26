@@ -273,13 +273,11 @@
 </div>
 {% endif %}
 
-{% if not is_pdf %}
     <div class="pdf-footer-container">
         <a href="{% url 'curriculum:descargar_pdf' %}" class="btn-pdf-final">
             Descargar Hoja de Vida en PDF
         </a>
     </div>
-{% endif %}
 
 {% else %}
     <div class="cv-block" style="text-align: center; padding: 100px 20px;">
