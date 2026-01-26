@@ -35,29 +35,34 @@
             margin: 0;
         }
 
-        /* CONTENEDOR DE BOTÓN PDF (FUERA DE LA HOJA) */
-        .pdf-container {
-            max-width: 900px;
-            margin: 0 auto 20px auto;
-            display: flex;
-            justify-content: flex-end; /* Lo alinea a la derecha */
-        }
+/* BOTÓN DE PDF AJUSTADO (Más profesional, menos gigante) */
+    .pdf-footer-container {
+        max-width: 1000px;
+        margin: 40px auto 60px auto;
+        text-align: center;
+    }
 
-        .btn-pdf {
-            background: #e74c3c; /* Color rojo PDF */
-            color: white;
-            padding: 12px 25px;
-            text-decoration: none;
-            border-radius: 8px;
-            font-weight: bold;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-            transition: transform 0.2s;
-        }
+    .btn-pdf-final {
+        padding: 12px 30px; /* Tamaño equilibrado */
+        background: var(--morado-premium);
+        color: white;
+        text-decoration: none;
+        border-radius: 6px;
+        font-weight: 600;
+        font-size: 1rem; /* Tamaño de letra normal */
+        text-transform: none; /* Quitamos las mayúsculas agresivas */
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        transition: all 0.2s ease;
+        border: none;
+    }
 
-        .btn-pdf:hover {
-            transform: scale(1.05);
-            background: #c0392b;
-        }
+    .btn-pdf-final:hover {
+        background: #4601bd; /* Un tono más oscuro al pasar el mouse */
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(88, 2, 237, 0.2);
+    }
 
         /* DISEÑO DE SECCIONES SEPARADAS */
         .cv-block {
