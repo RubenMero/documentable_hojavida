@@ -6,7 +6,7 @@
     <title>{% block title %}Hoja de Vida Automatizada{% endblock %}</title>
 
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap" rel="stylesheet">
-    
+
     <style>
         :root {
             --bg-canvas: #f4f7f9;
@@ -17,7 +17,11 @@
             --text-muted: #64748b;
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
         body {
             font-family: 'Plus Jakarta Sans', sans-serif;
@@ -26,7 +30,7 @@
             line-height: 1.6;
         }
 
-        /* --- BOTONES DE GESTIÓN FLOTANTES (Solo Admin) --- */
+        /* --- BOTONES ADMIN FLOTANTES --- */
         .floating-nav {
             position: fixed;
             top: 25px;
@@ -45,29 +49,28 @@
             color: var(--primary-dark);
             font-size: 0.85rem;
             font-weight: 600;
-            border: 1px solid rgba(0,0,0,0.08);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-            transition: all 0.3s ease;
+            border: 1px solid rgba(0, 0, 0, 0.08);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            transition: 0.3s ease;
+            cursor: pointer;
+            font-family: inherit;
         }
 
         .nav-button:hover {
             transform: translateY(-2px);
             background: var(--primary-dark);
-            color: white;
+            color: #fff;
         }
 
         .nav-button.logout {
             color: #ef4444;
             border-color: rgba(239, 68, 68, 0.2);
-
-
-
         }
 
-        /* --- TÍTULO EXTERIOR (Visible para todos) --- */
+        /* --- HEADER --- */
         .site-header {
             max-width: 1050px;
-            margin: 40px auto -30px auto;
+            margin: 40px auto -30px;
             padding: 0 20px;
             display: flex;
             align-items: center;
@@ -92,7 +95,7 @@
             background: var(--accent-blue);
         }
 
-        /* --- CONTENEDOR DE LA HOJA (Efecto Papel Premium) --- */
+        /* --- CONTENEDOR PRINCIPAL --- */
         main {
             max-width: 1050px;
             margin: 50px auto;
@@ -102,25 +105,38 @@
             position: relative;
             box-shadow: 0 20px 60px -15px rgba(0, 0, 0, 0.05);
             border-radius: 12px;
-
         }
 
-        /* Detalle artístico lateral */
         main::before {
             content: "";
             position: absolute;
-            top: 0; left: 0; width: 6px; height: 100%;
+            top: 0;
+            left: 0;
+            width: 6px;
+            height: 100%;
             background: linear-gradient(to bottom, var(--primary-dark), var(--accent-blue));
             border-radius: 12px 0 0 12px;
-
         }
 
-        /* Mensajes del sistema */
-        .messages-container { max-width: 1050px; margin: 0 auto 20px auto; }
-        .alert { padding: 15px; border-radius: 10px; text-align: center; font-weight: 500; }
-        .alert-success { background: #ecfdf5; color: #065f46; }
+        /* --- MENSAJES --- */
+        .messages-container {
+            max-width: 1050px;
+            margin: 0 auto 20px;
+        }
 
-        /* Footer */
+        .alert {
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+            font-weight: 500;
+        }
+
+        .alert-success {
+            background: #ecfdf5;
+            color: #065f46;
+        }
+
+        /* --- FOOTER --- */
         footer {
             text-align: center;
             padding: 40px 0;
@@ -128,46 +144,77 @@
             font-size: 0.85rem;
         }
 
-        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-        .page-animation { animation: slideUp 0.8s ease-out; }
+        /* --- ANIMACIÓN --- */
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
 
+        .page-animation {
+            animation: slideUp 0.8s ease-out;
+        }
+
+        /* --- RESPONSIVE --- */
         @media (max-width: 768px) {
-            main { margin: 10px; padding: 30px; border-radius: 0; }
-            .floating-nav { position: relative; top: 0; right: 0; padding: 20px; justify-content: center; }
-            .site-header { flex-direction: column; text-align: center; gap: 10px; }
+            main {
+                margin: 10px;
+                padding: 30px;
+                border-radius: 0;
+            }
 
+            .floating-nav {
+                position: relative;
+                top: 0;
+                right: 0;
+                padding: 20px;
+                justify-content: center;
+            }
 
-
+            .site-header {
+                flex-direction: column;
+                text-align: center;
+                gap: 10px;
+            }
         }
     </style>
 
-    </head>
+    {% block extra_css %}{% endblock %}
+</head>
+
 <body>
 
-    {% if user.is_authenticated and user.is_staff %}
-    <div class="admin-nav">
-        <a href="{% url 'curriculum:panel_gestion' %}" class="btn-admin">PANEL</a>
-        <form action="{% url 'curriculum:logout' %}" method="post" style="display: inline;">
-            {% csrf_token %}
-            <button type="submit" class="btn-admin" style="cursor:pointer; border:none;">SALIR</button>
-        </form>
-    </div>
-    {% endif %}
+{% if user.is_authenticated and user.is_staff %}
+<div class="floating-nav">
+    <a href="{% url 'curriculum:panel_gestion' %}" class="nav-button">Panel de Gestión</a>
 
-    <header class="header-principal">
-        <h1>Hoja de Vida Automatizada</h1>
-    </header>
+    <form action="{% url 'curriculum:logout' %}" method="post">
+        {% csrf_token %}
+        <button type="submit" class="nav-button logout">Cerrar Sesión</button>
+    </form>
+</div>
+{% endif %}
 
-    <div class="pdf-container">
-        <a href="{% url 'curriculum:descargar_pdf' %}" class="btn-pdf">
-            Descargar Hoja de Vida (PDF)
-        </a>
-    </div>
+<header class="site-header page-animation">
+    <h1 class="brand-title">Hoja de Vida Automatizada</h1>
+</header>
 
-    <main>
-        {% block content %}
-        {% endblock %}
-    </main>
+{% if messages %}
+<div class="messages-container">
+    {% for message in messages %}
+        <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+    {% endfor %}
+</div>
+{% endif %}
+
+<main class="page-animation">
+    {% block content %}{% endblock %}
+</main>
 
     <!-- FOOTER -->
     <footer style="text-align: center; padding: 20px; color: #333;">
@@ -176,6 +223,8 @@
         </p>
     </footer>
 
+
+{% block extra_js %}{% endblock %}
+
 </body>
 </html>
-
