@@ -2,183 +2,105 @@
 
 {% block extra_css %}
 <style>
-/* ================= VARIABLES PREMIUM ================= */
-:root {
-    --negro: #0f172a;
-    --morado: #6d28d9;
-    --morado-claro: #8b5cf6;
-    --fondo: linear-gradient(135deg, #4c1d95, #1e1b4b);
-    --blanco: #ffffff;
-    --gris: #64748b;
-}
+    :root {
+        --negro-fuerte: #000000;
+        --morado-premium: #5802ed;
+        /* Color de fondo para los contenedores principales (el espacio de atrás) */
+        --fondo-principal: #5802ed; 
+        /* Blanco para los bloques que guardan la información */
+        --blanco-bloque: #ffffff;
+    }
 
-/* ================= FONDO GENERAL ================= */
-body {
-    background: var(--fondo) !important;
-    font-family: 'Poppins', sans-serif;
-    margin: 0;
-    padding: 0;
-}
+    /* Fondo claro para toda la página */
+    body { 
+        background-color: var(--fondo-principal) !important; 
+        margin: 0;
+        padding: 0;
+    }
 
-/* ================= TARJETAS PRINCIPALES ================= */
-.cv-block {
-    background: var(--blanco);
-    max-width: 1100px;
-    margin: 30px auto;
-    padding: 35px;
-    border-radius: 18px;
-    box-shadow: 0 10px 40px rgba(0,0,0,0.15);
-    border: none;
-}
+    /* CONTENEDORES QUE GUARDAN INFORMACIÓN (Se mantienen blancos) */
+    .cv-block {
+        background-color: var(--blanco-bloque);
+        max-width: 1000px;
+        margin: 0 auto 25px auto;
+        padding: 40px;
+        border-radius: 12px;
+        /* Sombra suave para dar profundidad sobre el fondo claro */
+        box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        border: 1px solid #eef2f6;
+    }
 
-/* ================= TITULOS ================= */
-.seccion-titulo {
-    font-size: 1.4rem;
-    font-weight: 800;
-    color: var(--negro);
-    border-left: 6px solid var(--morado);
-    padding-left: 12px;
-    margin-bottom: 25px;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-}
+    /* TÍTULO DE SECCIÓN */
+    .seccion-titulo {
+        font-size: 1.3em;
+        color: var(--negro-fuerte);
+        border-bottom: 3px solid var(--morado-premium);
+        display: inline-block;
+        padding-bottom: 5px;
+        margin-bottom: 30px;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        font-weight: 800;
+    }
 
-/* ================= HEADER PERFIL ================= */
-.cv-header-flex {
-    display: flex;
-    align-items: center;
-    gap: 30px;
-}
-
-/* FOTO PERFIL */
-.cv-photo {
-    width: 180px;
-    height: 180px;
-    border-radius: 50%;
-    object-fit: cover;
-    border: 5px solid var(--morado);
-    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-}
-
-/* TEXTO HERO */
-.hero-text h1 {
-    font-size: 2.4rem;
-    font-weight: 900;
-    color: var(--negro);
-}
-
-.hero-text p {
-    font-size: 1.2rem;
-    font-weight: 600;
-    color: var(--morado);
-}
-
-/* ================= GRID DATOS ================= */
-.info-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 12px;
-}
-
-.info-item {
-    display: flex;
-    justify-content: space-between;
-    padding: 10px;
-    background: #f8fafc;
-    border-radius: 8px;
-    font-size: 0.95rem;
-}
-
-.info-item strong {
-    color: var(--gris);
-    font-weight: 600;
-}
-
-/* ================= TARJETAS DE CONTENIDO ================= */
-.item-card {
-    background: #f9fafb;
-    padding: 20px;
-    border-radius: 12px;
-    margin-bottom: 15px;
-    border-left: 5px solid var(--morado);
-    transition: 0.3s;
-}
-
-.item-card:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 8px 25px rgba(0,0,0,0.12);
-}
-
-/* ================= BADGES ================= */
-.badge {
-    display: inline-block;
-    padding: 6px 14px;
-    background: var(--morado);
-    color: white;
-    border-radius: 20px;
-    font-size: 0.8rem;
-    font-weight: 600;
-}
-
-/* ================= BOTON CERTIFICADO ================= */
-.certificado-link {
-    display: inline-block;
-    margin-top: 10px;
-    color: var(--morado);
-    font-weight: 600;
-    text-decoration: none;
-}
-
-.certificado-link:hover {
-    text-decoration: underline;
-}
-
-/* ================= VENTA GARAGE IMAGEN ================= */
-.item-card img {
-    max-height: 450px;
-    object-fit: contain;
-    border-radius: 12px;
-    border: 1px solid #e5e7eb;
-    background: #fff;
-}
-
-/* ================= BOTON PDF ================= */
-.pdf-footer-container {
-    text-align: center;
-    margin: 60px auto;
-}
-
-.btn-pdf-final {
-    background: var(--morado);
-    color: white;
-    padding: 14px 40px;
-    border-radius: 30px;
-    font-weight: 700;
-    font-size: 1.1rem;
-    text-decoration: none;
-    box-shadow: 0 8px 25px rgba(109,40,217,0.5);
-    transition: 0.3s;
-}
-
-.btn-pdf-final:hover {
-    background: var(--morado-claro);
-    transform: scale(1.05);
-}
-
-/* ================= RESPONSIVE ================= */
-@media (max-width: 768px) {
+    /* DISEÑO DE CABECERA */
     .cv-header-flex {
-        flex-direction: column;
-        text-align: center;
+        display: flex;
+        gap: 30px;
+        align-items: center;
     }
 
     .cv-photo {
-        width: 140px;
-        height: 140px;
+        width: 150px;
+        height: 150px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 3px solid var(--negro-fuerte);
+        padding: 3px;
+        background: #fff;
     }
-}
-</style>
 
+    /* BOTÓN PDF AL FINAL (Tamaño moderado) */
+    .pdf-footer-container {
+        max-width: 1000px;
+        margin: 40px auto 80px auto;
+        text-align: center;
+    }
+
+    .btn-pdf-final {
+        padding: 12px 35px;
+        background: var(--morado-premium);
+        color: white;
+        text-decoration: none;
+        border-radius: 8px;
+        font-weight: 600;
+        font-size: 1rem;
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        transition: all 0.3s ease;
+    }
+
+    .btn-pdf-final:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(88, 2, 237, 0.3);
+        filter: brightness(1.1);
+    }
+
+    /* Ajustes de tabla/grid de info */
+    .info-item {
+        display: flex;
+        padding: 10px 0;
+        border-bottom: 1px solid #f8fafc;
+    }
+
+    .info-item strong {
+        width: 220px;
+        color: #475569;
+        font-size: 0.85em;
+        text-transform: uppercase;
+    }
+</style>
 {% endblock %}
 
 {% block content %}
