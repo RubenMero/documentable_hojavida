@@ -1,0 +1,312 @@
+{% extends 'curriculum/base.html' %}
+
+{% block title %}Editar Experiencia - Hoja de Vida{% endblock %}
+
+{% block extra_css %}
+<style>
+    .form-container {
+        max-width: 800px;
+        margin: 40px auto;
+        background: white;
+        border: 2px solid #e9ecef;
+        border-radius: 12px;
+        padding: 40px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    }
+    
+    .form-header {
+        text-align: center;
+        margin-bottom: 30px;
+        padding-bottom: 20px;
+        border-bottom: 3px solid #17a2b8;
+    }
+    
+    .form-header h2 {
+        color: #2c3e50;
+        font-size: 2em;
+        margin-bottom: 10px;
+    }
+    
+    .form-header p {
+        color: #6c757d;
+    }
+    
+    .form-group {
+        margin-bottom: 25px;
+    }
+    
+    .form-group label {
+        display: block;
+        color: #495057;
+        font-weight: 600;
+        margin-bottom: 8px;
+        font-size: 0.95em;
+    }
+    
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+        width: 100%;
+        padding: 12px 15px;
+        border: 2px solid #dee2e6;
+        border-radius: 6px;
+        font-size: 1em;
+        transition: all 0.2s;
+        font-family: inherit;
+    }
+    
+    .form-group textarea {
+        min-height: 120px;
+        resize: vertical;
+    }
+    
+    .form-group input:focus,
+    .form-group select:focus,
+    .form-group textarea:focus {
+        outline: none;
+        border-color: #17a2b8;
+        box-shadow: 0 0 0 3px rgba(23, 162, 184, 0.1);
+    }
+    
+    .form-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+    }
+    
+    .checkbox-group {
+        display: flex;
+        align-items: center;
+        margin-top: 10px;
+    }
+    
+    .checkbox-group input[type="checkbox"] {
+        width: auto;
+        margin-right: 10px;
+    }
+    
+    .form-errors {
+        background: #f8d7da;
+        border: 1px solid #f5c6cb;
+        color: #721c24;
+        padding: 12px;
+        border-radius: 6px;
+        margin-top: 8px;
+        font-size: 0.9em;
+    }
+    
+    .btn-submit {
+        width: 100%;
+        padding: 15px;
+        background: #17a2b8;
+        color: white;
+        border: none;
+        border-radius: 6px;
+        font-size: 1.1em;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s;
+        margin-top: 10px;
+    }
+    
+    .btn-submit:hover {
+        background: #138496;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(23, 162, 184, 0.4);
+    }
+    
+    .btn-cancelar {
+        display: block;
+        width: 100%;
+        padding: 12px;
+        background: #6c757d;
+        color: white;
+        text-align: center;
+        text-decoration: none;
+        border-radius: 6px;
+        font-size: 1em;
+        margin-top: 15px;
+        transition: all 0.2s;
+    }
+    
+    .btn-cancelar:hover {
+        background: #5a6268;
+    }
+    
+    /* BOTÓN ELIMINAR - NUEVO */
+    .btn-eliminar {
+        display: block;
+        width: 100%;
+        padding: 12px;
+        background: #dc3545;
+        color: white;
+        text-align: center;
+        text-decoration: none;
+        border-radius: 6px;
+        font-size: 1em;
+        margin-top: 15px;
+        transition: all 0.2s;
+        border: none;
+        cursor: pointer;
+        font-weight: 600;
+    }
+    
+    .btn-eliminar:hover {
+        background: #c82333;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(220, 53, 69, 0.4);
+    }
+    
+    .current-file {
+        background: #e7f3ff;
+        padding: 10px;
+        border-radius: 4px;
+        margin-top: 5px;
+        color: #004085;
+        font-size: 0.9em;
+    }
+    
+    @media (max-width: 768px) {
+        .form-row {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="form-container">
+    <div class="form-header">
+        <h2>Editar Experiencia Laboral</h2>
+        <p>Actualiza la información de esta experiencia</p>
+    </div>
+    
+    <form method="POST" enctype="multipart/form-data" novalidate>
+        {% csrf_token %}
+        
+        {% if form.non_field_errors %}
+            <div class="form-errors">
+                {{ form.non_field_errors }}
+            </div>
+        {% endif %}
+        
+        <div class="form-group">
+            <label for="{{ form.cargodesempenado.id_for_label }}">Cargo Desempeñado *</label>
+            {{ form.cargodesempenado }}
+            {% if form.cargodesempenado.errors %}
+                <div class="form-errors">{{ form.cargodesempenado.errors }}</div>
+            {% endif %}
+        </div>
+        
+        <div class="form-group">
+            <label for="{{ form.nombrempresa.id_for_label }}">Nombre de la Empresa *</label>
+            {{ form.nombrempresa }}
+            {% if form.nombrempresa.errors %}
+                <div class="form-errors">{{ form.nombrempresa.errors }}</div>
+            {% endif %}
+        </div>
+        
+        <div class="form-row">
+            <div class="form-group">
+                <label for="{{ form.lugarempresa.id_for_label }}">Lugar/Ciudad</label>
+                {{ form.lugarempresa }}
+                {% if form.lugarempresa.errors %}
+                    <div class="form-errors">{{ form.lugarempresa.errors }}</div>
+                {% endif %}
+            </div>
+            
+            <div class="form-group">
+                <label for="{{ form.emailempresa.id_for_label }}">Email de la Empresa</label>
+                {{ form.emailempresa }}
+                {% if form.emailempresa.errors %}
+                    <div class="form-errors">{{ form.emailempresa.errors }}</div>
+                {% endif %}
+            </div>
+        </div>
+        
+        <div class="form-group">
+            <label for="{{ form.sitiowebempresa.id_for_label }}">Sitio Web de la Empresa</label>
+            {{ form.sitiowebempresa }}
+            {% if form.sitiowebempresa.errors %}
+                <div class="form-errors">{{ form.sitiowebempresa.errors }}</div>
+            {% endif %}
+        </div>
+        
+        <div class="form-row">
+            <div class="form-group">
+                <label for="{{ form.fechainiciogestion.id_for_label }}">Fecha de Inicio *</label>
+                {{ form.fechainiciogestion }}
+                {% if form.fechainiciogestion.errors %}
+                    <div class="form-errors">{{ form.fechainiciogestion.errors }}</div>
+                {% endif %}
+            </div>
+            
+            <div class="form-group">
+                <label for="{{ form.fechafingestion.id_for_label }}">Fecha de Fin (dejar vacío si es actual)</label>
+                {{ form.fechafingestion }}
+                {% if form.fechafingestion.errors %}
+                    <div class="form-errors">{{ form.fechafingestion.errors }}</div>
+                {% endif %}
+            </div>
+        </div>
+        
+        <div class="form-group">
+            <label for="{{ form.descripcionfunciones.id_for_label }}">Descripción de Funciones</label>
+            {{ form.descripcionfunciones }}
+            {% if form.descripcionfunciones.errors %}
+                <div class="form-errors">{{ form.descripcionfunciones.errors }}</div>
+            {% endif %}
+        </div>
+        
+        <div class="form-row">
+            <div class="form-group">
+                <label for="{{ form.nombrecontactoempresarial.id_for_label }}">Nombre del Contacto</label>
+                {{ form.nombrecontactoempresarial }}
+                {% if form.nombrecontactoempresarial.errors %}
+                    <div class="form-errors">{{ form.nombrecontactoempresarial.errors }}</div>
+                {% endif %}
+            </div>
+            
+            <div class="form-group">
+                <label for="{{ form.telefonocontactoempresarial.id_for_label }}">Teléfono del Contacto</label>
+                {{ form.telefonocontactoempresarial }}
+                {% if form.telefonocontactoempresarial.errors %}
+                    <div class="form-errors">{{ form.telefonocontactoempresarial.errors }}</div>
+                {% endif %}
+            </div>
+        </div>
+        
+        <div class="form-group">
+            <label for="{{ form.rutacertificado.id_for_label }}">Certificado (PDF, Imagen)</label>
+            {% if experiencia.rutacertificado %}
+                <div class="current-file">
+                    Archivo actual: <a href="{{ experiencia.rutacertificado.url }}" target="_blank">Ver certificado</a>
+                </div>
+            {% endif %}
+            {{ form.rutacertificado }}
+            {% if form.rutacertificado.errors %}
+                <div class="form-errors">{{ form.rutacertificado.errors }}</div>
+            {% endif %}
+        </div>
+        
+        <div class="form-group">
+            <div class="checkbox-group">
+                {{ form.activarparaqueseveaenfront }}
+                <label for="{{ form.activarparaqueseveaenfront.id_for_label }}">Mostrar en la hoja de vida pública</label>
+            </div>
+            {% if form.activarparaqueseveaenfront.errors %}
+                <div class="form-errors">{{ form.activarparaqueseveaenfront.errors }}</div>
+            {% endif %}
+        </div>
+        
+        <button type="submit" class="btn-submit">
+            Guardar Cambios
+        </button>
+        
+        <a href="{% url 'curriculum:panel_gestion' %}" class="btn-cancelar">
+            Cancelar
+        </a>
+        
+    </form>
+</div>
+{% endblock %}

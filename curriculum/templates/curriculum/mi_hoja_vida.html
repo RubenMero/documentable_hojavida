@@ -1,0 +1,125 @@
+{% extends 'curriculum/base.html' %}
+
+{% block content %}
+<style>
+    .section-box { display: none; animation: zoomIn 0.3s ease; }
+    .section-box.active { display: block; }
+
+    @keyframes zoomIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
+
+    .glass-panel {
+        background: var(--glass-white);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255,255,255,0.1);
+        border-radius: 30px;
+        padding: 40px;
+    }
+
+    /* Títulos con Colores Únicos */
+    .title-datos { color: #00d2ff; }
+    .title-exp { color: #f093fb; }
+    .title-cursos { color: #5eead4; }
+    .title-recon { color: #fcd34d; }
+    .title-acad { color: #fb7185; }
+    .title-lab { color: #818cf8; }
+    .title-garage { color: #4ade80; }
+
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+    .info-tag { background: rgba(255,255,255,0.03); padding: 20px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.05); }
+    .info-tag label { display: block; font-size: 0.7rem; color: #94a3b8; margin-bottom: 5px; text-transform: uppercase; }
+</style>
+
+{% if perfil %}
+    <div id="sec1" class="section-box active">
+        <div class="glass-panel">
+            <h2 class="title-datos"><i class="fas fa-user-shield"></i> Datos Personales</h2>
+            <br>
+            <div class="grid-2">
+                <div class="info-tag"><label>Nombre Completo</label><h3>{{ perfil.nombres }} {{ perfil.apellidos }}</h3></div>
+                <div class="info-tag"><label>Cédula</label><h3>{{ perfil.numerocedula }}</h3></div>
+                <div class="info-tag"><label>Nacionalidad</label><h3>{{ perfil.nacionalidad }}</h3></div>
+                <div class="info-tag"><label>Ubicación</label><h3>{{ perfil.direcciondomiciliaria }}</h3></div>
+            </div>
+        </div>
+    </div>
+
+    <div id="sec2" class="section-box">
+        <div class="glass-panel">
+            <h2 class="title-exp"><i class="fas fa-fire"></i> Experiencia Laboral</h2>
+            <br>
+            {% for exp in experiencias %}
+            <div class="info-tag" style="margin-bottom:15px;">
+                <h4 style="color: #f093fb;">{{ exp.cargodesempenado }}</h4>
+                <p>{{ exp.nombrempresa }}</p>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <div id="sec3" class="section-box">
+        <div class="glass-panel">
+            <h2 class="title-cursos"><i class="fas fa-microchip"></i> Cursos Realizados</h2>
+            <br>
+            {% for c in cursos %}
+            <div class="info-tag" style="border-left: 4px solid #5eead4;">
+                <h4>{{ c.nombrecurso }}</h4>
+                <small>{{ c.totalhoras }} Horas Certificadas</small>
+            </div>
+            <br>
+            {% endfor %}
+        </div>
+    </div>
+
+    <div id="sec4" class="section-box">
+        <div class="glass-panel">
+            <h2 class="title-recon"><i class="fas fa-crown"></i> Reconocimientos</h2>
+            <br>
+            {% for r in reconocimientos %}
+            <div class="info-tag">
+                <p>{{ r.descripcionreconocimiento }}</p>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <div id="sec5" class="section-box">
+        <div class="glass-panel">
+            <h2 class="title-acad"><i class="fas fa-flask"></i> Productos Academicos</h2>
+            <br>
+            {% for a in productos_academicos %}
+            <div class="info-tag">
+                <h4>{{ a.nombrerecurso }}</h4>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <div id="sec6" class="section-box">
+        <div class="glass-panel">
+            <h2 class="title-lab"><i class="fas fa-project-diagram"></i> Productos Laborales </h2>
+            <br>
+            {% for l in productos_laborales %}
+            <div class="info-tag">
+                <h4>{{ l.nombreproducto }}</h4>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <div id="sec7" class="section-box">
+        <div class="glass-panel">
+            <h2 class="title-garage"><i class="fas fa-shopping-cart"></i> Venta Garage</h2>
+            <br>
+            <div class="grid-2">
+                {% for v in ventas %}
+                <div class="info-tag" style="text-align:center;">
+                    <p>{{ v.nombreproducto }}</p>
+                    <h2 style="color: #4ade80;">${{ v.valordelbien }}</h2>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+{% endif %}
+{% endblock %}

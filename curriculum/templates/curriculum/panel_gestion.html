@@ -1,0 +1,120 @@
+{% extends "curriculum/base.html" %}
+
+{% block title %}Panel de Gestión - Hoja de Vida{% endblock %}
+
+{% block extra_css %}
+<style>
+    .panel-container { max-width: 1200px; margin: 0 auto; padding: 20px; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+    .panel-header { background: #2d3436; color: white; padding: 30px; border-radius: 10px; text-align: center; margin-bottom: 30px; }
+    .seccion-panel { background: #ffffff; border: 1px solid #dfe6e9; border-radius: 8px; padding: 20px; margin-bottom: 20px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+    .seccion-titulo { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #6c5ce7; padding-bottom: 10px; margin-bottom: 15px; font-size: 1.4em; font-weight: bold; }
+    .btn-agregar { background: #6c5ce7; color: white; padding: 8px 15px; border-radius: 5px; text-decoration: none; font-size: 0.9em; }
+    .item-panel { display: flex; justify-content: space-between; align-items: center; background: #f9f9f9; padding: 12px; margin-bottom: 8px; border-radius: 5px; border-left: 5px solid #6c5ce7; }
+    .btn-editar { color: #0984e3; text-decoration: none; margin-right: 10px; font-weight: bold; }
+    .btn-eliminar { color: #d63031; text-decoration: none; font-weight: bold; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="panel-container">
+    <div class="panel-header">
+        <h1>Centro de Control Profesional</h1>
+        <p>Usuario: {{ user.username }} | Perfil: {{ perfil.nombres }} {{ perfil.apellidos }}</p>
+    </div>
+
+    <div class="seccion-panel">
+        <div class="seccion-titulo">
+            <span>Datos Personales</span>
+            <a href="{% url 'curriculum:editar_datos_personales' %}" class="btn-agregar">Editar Perfil</a>
+        </div>
+        <p><strong>Cédula:</strong> {{ perfil.numerocedula }} | <strong>Nacionalidad:</strong> {{ perfil.nacionalidad }}</p>
+    </div>
+
+    <div class="seccion-panel">
+        <div class="seccion-titulo">
+            <span>Experiencia Laboral</span>
+            <a href="{% url 'curriculum:agregar_experiencia' %}" class="btn-agregar">+ Agregar</a>
+        </div>
+        {% for exp in experiencias %}
+        <div class="item-panel">
+            <div><strong>{{ exp.cargodesempenado }}</strong> - {{ exp.nombrempresa }}</div>
+            <div>
+                <a href="{% url 'curriculum:editar_experiencia' exp.idexperiencialaboral %}" class="btn-editar">Editar</a>
+                <a href="{% url 'curriculum:eliminar_experiencia' exp.idexperiencialaboral %}" class="btn-eliminar">Borrar</a>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <div class="seccion-panel">
+        <div class="seccion-titulo">
+            <span>Reconocimientos</span>
+            <a href="{% url 'curriculum:agregar_reconocimiento' %}" class="btn-agregar">+ Agregar</a>
+        </div>
+        {% for rec in reconocimientos %}
+        <div class="item-panel">
+            <div>{{ rec.descripcionreconocimiento }} ({{ rec.fechareconocimiento|date:"Y" }})</div>
+            <div>
+                <a href="{% url 'curriculum:editar_reconocimiento' rec.idreconocimiento %}" class="btn-editar">Editar</a>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <div class="seccion-panel">
+        <div class="seccion-titulo">
+            <span>Cursos Realizados</span>
+            <a href="{% url 'curriculum:agregar_curso' %}" class="btn-agregar">+ Agregar</a>
+        </div>
+        {% for curso in cursos %}
+        <div class="item-panel">
+            <div>{{ curso.nombrecurso }}</div>
+            <a href="{% url 'curriculum:editar_curso' curso.idcursorealizado %}" class="btn-editar">Editar</a>
+        </div>
+        {% endfor %}
+    </div>
+
+    <div class="seccion-panel">
+        <div class="seccion-titulo">
+            <span>Productos Académicos</span>
+            <a href="{% url 'curriculum:agregar_producto_academico' %}" class="btn-agregar">+ Agregar</a>
+        </div>
+        {% for prod in productos_academicos %}
+        <div class="item-panel">
+            <div>{{ prod.nombrerecurso }}</div>
+            <a href="{% url 'curriculum:editar_producto_academico' prod.idproductoacademico %}" class="btn-editar">Editar</a>
+        </div>
+        {% endfor %}
+    </div>
+
+    <div class="seccion-panel">
+        <div class="seccion-titulo">
+            <span>Productos Laborales</span>
+            <a href="{% url 'curriculum:agregar_producto_laboral' %}" class="btn-agregar">+ Agregar</a>
+        </div>
+        {% for pl in productos_laborales %}
+        <div class="item-panel">
+            <div>{{ pl.nombreproducto }}</div>
+            <a href="{% url 'curriculum:editar_producto_laboral' pl.idproductoslaborales %}" class="btn-editar">Editar</a>
+        </div>
+        {% endfor %}
+    </div>
+
+    <div class="seccion-panel">
+        <div class="seccion-titulo">
+            <span>Venta Garage</span>
+            <a href="{% url 'curriculum:agregar_venta' %}" class="btn-agregar">+ Agregar</a>
+        </div>
+        {% for v in ventas %}
+        <div class="item-panel">
+            <div>{{ v.nombreproducto }} - ${{ v.valordelbien }}</div>
+            <a href="{% url 'curriculum:editar_venta' v.idventagarage %}" class="btn-editar">Editar</a>
+        </div>
+        {% endfor %}
+    </div>
+
+    <div style="text-align: center; margin: 40px 0;">
+        <a href="{% url 'curriculum:mi_hoja_vida' %}" class="btn-agregar" style="background:#00b894; padding: 15px 30px; font-size: 1.2em;">Ver Hoja de Vida Pública</a>
+    </div>
+</div>
+{% endblock %}
