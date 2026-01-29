@@ -32,7 +32,7 @@
 {% if perfil %}
     <div id="sec1" class="section-box active">
         <div class="glass-panel">
-            <h2 class="title-datos"><i class="fas fa-user-shield"></i> Núcleo de Identidad</h2>
+            <h2 class="title-datos"><i class="fas fa-user-shield"></i> Datos Personales</h2>
             <br>
             <div class="grid-2">
                 <div class="info-tag"><label>Nombre Completo</label><h3>{{ perfil.nombres }} {{ perfil.apellidos }}</h3></div>
@@ -45,7 +45,7 @@
 
     <div id="sec2" class="section-box">
         <div class="glass-panel">
-            <h2 class="title-exp"><i class="fas fa-fire"></i> Experiencia en Campo</h2>
+            <h2 class="title-exp"><i class="fas fa-fire"></i> Experiencia Laboral</h2>
             <br>
             {% for exp in experiencias %}
             <div class="info-tag" style="margin-bottom:15px;">
@@ -58,7 +58,7 @@
 
     <div id="sec3" class="section-box">
         <div class="glass-panel">
-            <h2 class="title-cursos"><i class="fas fa-microchip"></i> Formación Técnica</h2>
+            <h2 class="title-cursos"><i class="fas fa-microchip"></i> Cursos Realizados</h2>
             <br>
             {% for c in cursos %}
             <div class="info-tag" style="border-left: 4px solid #5eead4;">
@@ -72,7 +72,7 @@
 
     <div id="sec4" class="section-box">
         <div class="glass-panel">
-            <h2 class="title-recon"><i class="fas fa-crown"></i> Hall of Fame</h2>
+            <h2 class="title-recon"><i class="fas fa-crown"></i> Reconocimientos</h2>
             <br>
             {% for r in reconocimientos %}
             <div class="info-tag">
@@ -84,7 +84,7 @@
 
     <div id="sec5" class="section-box">
         <div class="glass-panel">
-            <h2 class="title-acad"><i class="fas fa-flask"></i> Laboratorio Académico</h2>
+            <h2 class="title-acad"><i class="fas fa-flask"></i> Productos Academicos</h2>
             <br>
             {% for a in productos_academicos %}
             <div class="info-tag">
@@ -96,7 +96,7 @@
 
     <div id="sec6" class="section-box">
         <div class="glass-panel">
-            <h2 class="title-lab"><i class="fas fa-project-diagram"></i> Deploy Laboral</h2>
+            <h2 class="title-lab"><i class="fas fa-project-diagram"></i> Productos Laborales </h2>
             <br>
             {% for l in productos_laborales %}
             <div class="info-tag">
@@ -108,7 +108,7 @@
 
     <div id="sec7" class="section-box">
         <div class="glass-panel">
-            <h2 class="title-garage"><i class="fas fa-shopping-cart"></i> Stock Garage</h2>
+            <h2 class="title-garage"><i class="fas fa-shopping-cart"></i> Venta Garage</h2>
             <br>
             <div class="grid-2">
                 {% for v in ventas %}
