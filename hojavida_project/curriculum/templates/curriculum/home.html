@@ -1,0 +1,69 @@
+{% extends 'curriculum/base.html' %}
+
+{% block title %}Inicio{% endblock %}
+
+{% block content %}
+
+<div style="margin-top: 25px; margin-bottom: 25px;">
+
+    {% if not user.is_authenticated %}
+        <!-- USUARIO NO AUTENTICADO -->
+        <div style="
+            max-width: 600px;
+            margin: auto;
+            padding: 25px 25px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            text-align: center;
+        ">
+            <h2 style="margin-bottom: 10px;">
+                Hoja de vida profesional
+            </h2>
+
+            <p style="margin-bottom: 20px;">
+                Debe iniciar sesión para acceder a mi hoja de vida.
+            </p>
+
+            <a href="{% url 'curriculum:login' %}" class="btn btn-primary" style="margin-right: 10px;">
+                Signin
+            </a>
+
+            <a href="{% url 'curriculum:signup' %}" class="btn btn-outline-secondary">
+                Signup
+            </a>
+        </div>
+
+    {% else %}
+        <!-- USUARIO AUTENTICADO -->
+        <div style="
+            max-width: 700px;
+            margin: auto;
+            padding: 25px 25px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            text-align: center;
+        ">
+            <h2 style="margin-bottom: 10px;">
+                Bienvenido
+            </h2>
+
+            <p style="margin-bottom: 20px;">
+                Acceso habilitado a la hoja de vida.
+            </p>
+
+            <a href="{% url 'curriculum:mi_hoja_vida' %}" class="btn btn-success">
+                Mi hoja de vida
+            </a>
+
+            {% if user.is_staff %}
+                <br><br>
+                <a href="{% url 'curriculum:panel_gestion' %}" class="btn btn-secondary">
+                    Panel
+                </a>
+            {% endif %}
+        </div>
+    {% endif %}
+
+</div>
+
+{% endblock %}
