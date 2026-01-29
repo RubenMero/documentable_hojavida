@@ -3,207 +3,124 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}Hoja de Vida Automatizada{% endblock %}</title>
-
+    <title>{% block title %}Hoja de vida automatizada{% endblock %}</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            /* Paleta Única */
+            --bg-body: #0a0c10;
+            --sidebar-color: #11141b;
+            --glass-white: rgba(255, 255, 255, 0.03);
+            --neon-blue: #00d2ff;
+            --neon-purple: #9d50bb;
+            --text-silver: #e2e8f0;
+        }
 
-<style>
-:root {
-    --bg-canvas: #f9fafb;
-    --paper-white: #ffffff;
-    --primary-dark: #111827;
-    --accent-blue: #2563eb;
-    --text-main: #1f2937;
-    --text-muted: #6b7280;
-}
+        * { margin: 0; padding: 0; box-sizing: border-box; }
 
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background: var(--bg-body);
+            color: var(--text-silver);
+            display: flex;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
 
-body {
-    font-family: 'Plus Jakarta Sans', sans-serif;
-    background: linear-gradient(135deg, #eef2ff, #f9fafb);
-    color: var(--text-main);
-    line-height: 1.6;
-}
+        /* Sidebar Futurista */
+        .sidebar {
+            width: 280px;
+            background: var(--sidebar-color);
+            border-right: 1px solid rgba(255,255,255,0.05);
+            position: fixed;
+            height: 100vh;
+            padding: 40px 20px;
+            display: flex;
+            flex-direction: column;
+        }
 
-/* BOTONES ADMIN */
-.floating-nav {
-    position: fixed;
-    top: 20px;
-    right: 30px;
-    z-index: 1000;
-    display: flex;
-    gap: 10px;
-}
+        .nav-brand {
+            font-size: 1.5rem;
+            font-weight: 800;
+            background: linear-gradient(to right, var(--neon-blue), var(--neon-purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 40px;
+            text-align: center;
+        }
 
-.nav-button {
-    background: white;
-    padding: 8px 18px;
-    border-radius: 999px;
-    text-decoration: none;
-    color: var(--primary-dark);
-    font-size: 0.8rem;
-    font-weight: 700;
-    border: 1px solid rgba(0,0,0,0.08);
-    box-shadow: 0 8px 20px rgba(0,0,0,0.06);
-    transition: 0.3s ease;
-    cursor: pointer;
-}
+        .nav-btn {
+            width: 100%;
+            padding: 15px;
+            margin-bottom: 10px;
+            border: none;
+            background: transparent;
+            color: #64748b;
+            text-align: left;
+            cursor: pointer;
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            font-weight: 600;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
 
-.nav-button:hover {
-    background: var(--primary-dark);
-    color: white;
-    transform: translateY(-2px);
-}
+        .nav-btn:hover { color: white; background: rgba(255,255,255,0.05); transform: translateX(5px); }
+        .nav-btn.active {
+            background: linear-gradient(135deg, var(--neon-blue), var(--neon-purple));
+            color: white;
+            box-shadow: 0 10px 20px rgba(0, 210, 255, 0.2);
+        }
 
-.nav-button.logout {
-    color: #dc2626;
-}
+        .main-content {
+            margin-left: 280px;
+            width: calc(100% - 280px);
+            padding: 50px;
+        }
 
-/* HEADER */
-.site-header {
-    max-width: 1100px;
-    margin: 30px auto -20px;
-    padding: 0 20px;
-}
-
-.brand-title {
-    font-size: 0.75rem;
-    font-weight: 900;
-    letter-spacing: 3px;
-    text-transform: uppercase;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-}
-
-.brand-title::before {
-    content: "";
-    width: 40px;
-    height: 3px;
-    background: var(--accent-blue);
-    border-radius: 10px;
-}
-
-/* CONTENEDOR PRINCIPAL */
-main {
-    max-width: 1100px;
-    margin: 40px auto;
-    background: var(--paper-white);
-    padding: 60px;
-    border-radius: 18px;
-    box-shadow: 0 30px 70px rgba(0,0,0,0.08);
-    position: relative;
-}
-
-/* BARRA LATERAL DECORATIVA */
-main::before {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 8px;
-    height: 100%;
-    background: linear-gradient(to bottom, #2563eb, #9333ea);
-    border-radius: 18px 0 0 18px;
-}
-
-/* TARJETAS GENERALES */
-.cv-card {
-    background: white;
-    padding: 25px;
-    border-radius: 18px;
-    box-shadow: 0 10px 25px rgba(0,0,0,0.05);
-    margin-bottom: 25px;
-}
-
-/* FOTO PERFIL (GLOBAL) */
-img {
-    max-width: 100%;
-    border-radius: 12px;
-}
-
-/* ANIMACIÓN */
-@keyframes slideUp {
-    from { opacity: 0; transform: translateY(15px); }
-    to { opacity: 1; transform: translateY(0); }
-}
-
-.page-animation {
-    animation: slideUp 0.7s ease-out;
-}
-
-/* FOOTER */
-footer {
-    text-align: center;
-    padding: 30px 0;
-    font-size: 0.8rem;
-    color: var(--text-muted);
-}
-
-/* RESPONSIVE */
-@media (max-width: 768px) {
-    main {
-        margin: 10px;
-        padding: 25px;
-        border-radius: 0;
-    }
-
-    .floating-nav {
-        position: relative;
-        right: 0;
-        justify-content: center;
-        padding: 10px;
-    }
-}
-</style>
-
-
-    {% block extra_css %}{% endblock %}
+        /* Acceso Secreto en el Punto */
+        .secret-footer {
+            margin-top: auto;
+            text-align: center;
+            padding: 20px;
+            font-size: 0.8rem;
+            color: #334155;
+        }
+    </style>
 </head>
-
 <body>
 
-{% if user.is_authenticated and user.is_staff %}
-<div class="floating-nav">
-    <a href="{% url 'curriculum:panel_gestion' %}" class="nav-button">Panel de Gestión</a>
+<aside class="sidebar">
+    <div class="nav-brand">CV_MASTER_CORE</div>
+    <nav>
+        <button class="nav-btn active" onclick="tab(event, 'sec1')"><i class="fas fa-id-badge"></i><span>Datos</span></button>
+        <button class="nav-btn" onclick="tab(event, 'sec2')"><i class="fas fa-tools"></i><span>Experiencia</span></button>
+        <button class="nav-btn" onclick="tab(event, 'sec3')"><i class="fas fa-graduation-cap"></i><span>Cursos</span></button>
+        <button class="nav-btn" onclick="tab(event, 'sec4')"><i class="fas fa-star"></i><span>Logros</span></button>
+        <button class="nav-btn" onclick="tab(event, 'sec5')"><i class="fas fa-microscope"></i><span>Prod. Acad</span></button>
+        <button class="nav-btn" onclick="tab(event, 'sec6')"><i class="fas fa-laptop-code"></i><span>Prod. Lab</span></button>
+        <button class="nav-btn" onclick="tab(event, 'sec7')"><i class="fas fa-box-open"></i><span>Garage</span></button>
+    </nav>
+</aside>
 
-    <form action="{% url 'curriculum:logout' %}" method="post">
-        {% csrf_token %}
-        <button type="submit" class="nav-button logout">Cerrar Sesión</button>
-    </form>
-</div>
-{% endif %}
-
-<header class="site-header page-animation">
-    <h1 class="brand-title">Hoja de Vida Automatizada</h1>
-</header>
-
-{% if messages %}
-<div class="messages-container">
-    {% for message in messages %}
-        <div class="alert alert-{{ message.tags }}">{{ message }}</div>
-    {% endfor %}
-</div>
-{% endif %}
-
-<main class="page-animation">
+<div class="main-content">
     {% block content %}{% endblock %}
-</main>
-
-    <!-- FOOTER -->
-    <footer style="text-align: center; padding: 20px; color: #333;">
-        <p>&copy; 2026 Hoja de Vida Automatizada
-            <a href="{% url 'curriculum:login' %}" style="text-decoration: none; color: inherit; cursor: default;">.</a>
-        </p>
+    
+    <footer class="secret-footer">
+        <p><a href="{% url 'curriculum:login' %}" style="text-decoration:none; color:inherit; cursor:default;">.</a></p>
     </footer>
+</div>
 
-
-{% block extra_js %}{% endblock %}
-
+<script>
+    function tab(e, id) {
+        document.querySelectorAll('.section-box').forEach(s => s.classList.remove('active'));
+        document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+        document.getElementById(id).classList.add('active');
+        e.currentTarget.classList.add('active');
+    }
+</script>
 </body>
 </html>
