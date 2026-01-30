@@ -2,55 +2,145 @@
 
 {% block content %}
 <style>
-    .section-box { display: none; animation: zoomIn 0.3s ease; }
+    /* Animaciones */
+    .section-box { display: none; animation: slideInUp 0.5s ease-out; }
     .section-box.active { display: block; }
+    @keyframes slideInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
 
-    @keyframes zoomIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
-
+    /* Contenedor Principal Estilo Glassmorphism */
     .glass-panel {
-        background: var(--glass-white);
-        backdrop-filter: blur(10px);
-        border: 1px solid rgba(255,255,255,0.1);
+        background: rgba(17, 20, 27, 0.6);
+        backdrop-filter: blur(15px);
+        border: 1px solid rgba(255,255,255,0.08);
         border-radius: 30px;
         padding: 40px;
+        box-shadow: 0 20px 50px rgba(0,0,0,0.4);
     }
 
-    /* Títulos con Colores Únicos */
-    .title-datos { color: #00d2ff; }
-    .title-exp { color: #f093fb; }
-    .title-cursos { color: #5eead4; }
-    .title-recon { color: #fcd34d; }
-    .title-acad { color: #fb7185; }
-    .title-lab { color: #818cf8; }
-    .title-garage { color: #4ade80; }
+    /* Cabeceras de Sección con Iconos */
+    .section-header {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        margin-bottom: 35px;
+        color: var(--neon-blue);
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        font-size: 1.6rem;
+    }
 
+    /* Tarjetas de Información (Iguales a tus capturas) */
+    .data-card {
+        background: rgba(255, 255, 255, 0.02);
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        border-radius: 20px;
+        padding: 25px;
+        margin-bottom: 20px;
+        transition: 0.3s ease;
+    }
+    .data-card:hover {
+        background: rgba(255, 255, 255, 0.04);
+        border-color: var(--neon-blue);
+    }
+
+    .data-card label {
+        display: block;
+        font-size: 0.7rem;
+        color: #64748b;
+        text-transform: uppercase;
+        font-weight: 800;
+        margin-bottom: 8px;
+    }
+
+    .data-card h3 {
+        font-size: 1.3rem;
+        color: white;
+        font-weight: 700;
+    }
+
+    /* Marco de Foto de Perfil */
+    .profile-photo-frame {
+        width: 150px;
+        height: 150px;
+        border: 2px solid var(--neon-blue);
+        border-radius: 20px;
+        overflow: hidden;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: rgba(0, 0, 0, 0.2);
+        box-shadow: 0 0 15px rgba(0, 210, 255, 0.2);
+    }
+    .profile-photo-frame img { width: 100%; height: 100%; object-fit: cover; }
+
+    /* Botones de Enlace/Certificado */
+    .link-btn {
+        color: var(--neon-blue);
+        text-decoration: underline;
+        font-size: 0.9rem;
+        font-weight: 600;
+        transition: 0.3s;
+        display: inline-block;
+        margin-top: 10px;
+    }
+    .link-btn:hover { color: white; text-shadow: 0 0 10px var(--neon-blue); }
+
+    /* Badge de Precios o Categorías */
+    .status-badge {
+        display: inline-block;
+        padding: 5px 15px;
+        border-radius: 10px;
+        font-size: 0.8rem;
+        font-weight: 800;
+        background: #fcd34d;
+        color: #000;
+        margin-right: 10px;
+    }
+
+    /* Grid Layouts */
+    .grid-personal { display: grid; grid-template-columns: 180px 1fr 1fr; gap: 20px; align-items: start; }
     .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
-    .info-tag { background: rgba(255,255,255,0.03); padding: 20px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.05); }
-    .info-tag label { display: block; font-size: 0.7rem; color: #94a3b8; margin-bottom: 5px; text-transform: uppercase; }
+
+    @media (max-width: 900px) {
+        .grid-personal, .grid-2 { grid-template-columns: 1fr; }
+        .profile-photo-frame { margin: 0 auto 20px auto; }
+    }
 </style>
 
 {% if perfil %}
     <div id="sec1" class="section-box active">
         <div class="glass-panel">
-            <h2 class="title-datos"><i class="fas fa-user-shield"></i> Datos Personales</h2>
-            <br>
-            <div class="grid-2">
-                <div class="info-tag"><label>Nombre Completo</label><h3>{{ perfil.nombres }} {{ perfil.apellidos }}</h3></div>
-                <div class="info-tag"><label>Cédula</label><h3>{{ perfil.numerocedula }}</h3></div>
-                <div class="info-tag"><label>Nacionalidad</label><h3>{{ perfil.nacionalidad }}</h3></div>
-                <div class="info-tag"><label>Ubicación</label><h3>{{ perfil.direcciondomiciliaria }}</h3></div>
+            <h2 class="section-header"><i class="fas fa-user-circle"></i> Datos Personales</h2>
+            <div class="grid-personal">
+                <div class="profile-photo-frame">
+                    {% if perfil.foto %}
+                        <img src="{{ perfil.foto.url }}" alt="Perfil">
+                    {% else %}
+                        <i class="fas fa-user fa-3x" style="color: #1e293b;"></i>
+                    {% endif %}
+                </div>
+                <div class="data-card"><label>Nombre Completo</label><h3>{{ perfil.nombres }} {{ perfil.apellidos }}</h3></div>
+                <div class="data-card"><label>Identificación</label><h3>{{ perfil.numerocedula }}</h3></div>
+            </div>
+            <div class="grid-2" style="margin-top: 20px;">
+                <div class="data-card"><label>Nacionalidad</label><h3>{{ perfil.nacionalidad }}</h3></div>
+                <div class="data-card"><label>Ubicación Actual</label><h3>{{ perfil.direcciondomiciliaria }}</h3></div>
             </div>
         </div>
     </div>
 
     <div id="sec2" class="section-box">
         <div class="glass-panel">
-            <h2 class="title-exp"><i class="fas fa-fire"></i> Experiencia Laboral</h2>
-            <br>
+            <h2 class="section-header"><i class="fas fa-tools"></i> Experiencia Laboral</h2>
             {% for exp in experiencias %}
-            <div class="info-tag" style="margin-bottom:15px;">
-                <h4 style="color: #f093fb;">{{ exp.cargodesempenado }}</h4>
-                <p>{{ exp.nombrempresa }}</p>
+            <div class="data-card">
+                <h3 style="color: var(--neon-blue);">{{ exp.cargodesempenado }}</h3>
+                <p style="color: #94a3b8; margin: 5px 0;"><strong>{{ exp.nombrempresa }}</strong> | {{ exp.ubicacion }}</p>
+                <p style="font-size: 0.85rem; color: #64748b;">{{ exp.fecha_inicio }} - {{ exp.fecha_fin }}</p>
+                {% if exp.certificado %}
+                    <a href="{{ exp.certificado.url }}" class="link-btn" target="_blank">Ver Certificado</a>
+                {% endif %}
             </div>
             {% endfor %}
         </div>
@@ -58,25 +148,30 @@
 
     <div id="sec3" class="section-box">
         <div class="glass-panel">
-            <h2 class="title-cursos"><i class="fas fa-microchip"></i> Cursos Realizados</h2>
-            <br>
+            <h2 class="section-header"><i class="fas fa-graduation-cap"></i> Cursos Realizados</h2>
             {% for c in cursos %}
-            <div class="info-tag" style="border-left: 4px solid #5eead4;">
-                <h4>{{ c.nombrecurso }}</h4>
-                <small>{{ c.totalhoras }} Horas Certificadas</small>
+            <div class="data-card">
+                <h3>{{ c.nombrecurso }}</h3>
+                <p style="color: #94a3b8; font-size: 0.9rem;">{{ c.totalhoras }} horas | {{ c.año }}</p>
+                <p style="color: #64748b;">Impartido por: {{ c.institucion }}</p>
+                {% if c.certificado %}
+                    <a href="{{ c.certificado.url }}" class="link-btn" target="_blank">Ver Certificado</a>
+                {% endif %}
             </div>
-            <br>
             {% endfor %}
         </div>
     </div>
 
     <div id="sec4" class="section-box">
         <div class="glass-panel">
-            <h2 class="title-recon"><i class="fas fa-crown"></i> Reconocimientos</h2>
-            <br>
+            <h2 class="section-header"><i class="fas fa-star"></i> Reconocimientos</h2>
             {% for r in reconocimientos %}
-            <div class="info-tag">
-                <p>{{ r.descripcionreconocimiento }}</p>
+            <div class="data-card">
+                <h3 style="text-transform: uppercase; font-size: 1rem;">{{ r.titulo_reconocimiento }}</h3>
+                <p style="color: #94a3b8; font-size: 0.9rem; margin-top:5px;">{{ r.descripcionreconocimiento }}</p>
+                {% if r.certificado %}
+                    <a href="{{ r.certificado.url }}" class="link-btn" target="_blank">Ver Certificado</a>
+                {% endif %}
             </div>
             {% endfor %}
         </div>
@@ -84,11 +179,15 @@
 
     <div id="sec5" class="section-box">
         <div class="glass-panel">
-            <h2 class="title-acad"><i class="fas fa-flask"></i> Productos Academicos</h2>
-            <br>
+            <h2 class="section-header"><i class="fas fa-microscope"></i> Productos Académicos</h2>
             {% for a in productos_academicos %}
-            <div class="info-tag">
-                <h4>{{ a.nombrerecurso }}</h4>
+            <div class="data-card">
+                <span class="status-badge" style="background: rgba(0, 210, 255, 0.1); color: var(--neon-blue); margin-bottom: 10px;">{{ a.categoria }}</span>
+                <h3>{{ a.nombrerecurso }}</h3>
+                <p style="color: #94a3b8; font-size: 0.9rem; margin: 10px 0;">{{ a.descripcion }}</p>
+                {% if a.enlace %}
+                    <a href="{{ a.enlace }}" class="link-btn" target="_blank">Ver en Línea</a>
+                {% endif %}
             </div>
             {% endfor %}
         </div>
@@ -96,11 +195,17 @@
 
     <div id="sec6" class="section-box">
         <div class="glass-panel">
-            <h2 class="title-lab"><i class="fas fa-project-diagram"></i> Productos Laborales </h2>
-            <br>
+            <h2 class="section-header"><i class="fas fa-laptop-code"></i> Productos Laborales</h2>
             {% for l in productos_laborales %}
-            <div class="info-tag">
-                <h4>{{ l.nombreproducto }}</h4>
+            <div class="data-card">
+                <h3 style="display: flex; align-items: center; gap: 10px;">
+                    <i class="fas fa-circle" style="color: #ff4d4d; font-size: 0.6rem;"></i> {{ l.nombreproducto }}
+                </h3>
+                <p style="color: #64748b; font-size: 0.8rem; margin: 5px 0;">{{ l.fecha }}</p>
+                <p style="color: #94a3b8; font-size: 0.9rem;">{{ l.descripcion }}</p>
+                {% if l.enlace %}
+                    <a href="{{ l.enlace }}" class="link-btn" target="_blank">Ver Proyecto</a>
+                {% endif %}
             </div>
             {% endfor %}
         </div>
@@ -108,18 +213,34 @@
 
     <div id="sec7" class="section-box">
         <div class="glass-panel">
-            <h2 class="title-garage"><i class="fas fa-shopping-cart"></i> Venta Garage</h2>
-            <br>
-            <div class="grid-2">
-                {% for v in ventas %}
-                <div class="info-tag" style="text-align:center;">
-                    <p>{{ v.nombreproducto }}</p>
-                    <h2 style="color: #4ade80;">${{ v.valordelbien }}</h2>
+            <h2 class="section-header"><i class="fas fa-box-open"></i> Venta Garage</h2>
+            {% for v in ventas %}
+            <div class="data-card">
+                <div class="grid-personal" style="grid-template-columns: 200px 1fr;">
+                    <div style="width: 100%; height: 140px; border-radius: 15px; background: #000; overflow: hidden;">
+                        {% if v.foto_producto %}
+                            <img src="{{ v.foto_producto.url }}" style="width: 100%; height: 100%; object-fit: cover;">
+                        {% endif %}
+                    </div>
+                    <div>
+                        <h3>{{ v.nombreproducto }}</h3>
+                        <p style="color: #64748b; font-size: 0.8rem;">Publicado el: {{ v.fecha_publicacion }}</p>
+                        <div style="margin: 15px 0;">
+                            <span class="status-badge">REGULAR</span>
+                            <span style="color: white; font-size: 1.4rem; font-weight: 800;">${{ v.valordelbien }}</span>
+                        </div>
+                        <p style="color: #94a3b8; font-size: 0.9rem;">{{ v.descripcion }}</p>
+                    </div>
                 </div>
-                {% endfor %}
             </div>
+            {% endfor %}
         </div>
     </div>
 
+{% else %}
+    <div class="glass-panel" style="text-align: center;">
+        <h2 style="color: var(--neon-blue);">Esperando datos...</h2>
+        <p>Agrega información en el panel de gestión para visualizar tu CV.</p>
+    </div>
 {% endif %}
 {% endblock %}
